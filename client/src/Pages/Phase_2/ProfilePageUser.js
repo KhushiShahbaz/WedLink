@@ -12,7 +12,6 @@ import {
   FiTrash2, FiTrendingUp, FiHeart,
 } from 'react-icons/fi';
 import defaultProfilePic from '../../assets/profile.jfif';
-import { HeroSection } from './Home';
 import { Button } from '../../Components/Layout/Button';
 import PreferenceCard from '../../Components/Phase_2/preferenceCard';
 import { PaymentCard } from '../../Components/Phase_2/paymentDetail';
@@ -143,8 +142,30 @@ export default function UserProfileDisplay() {
   if (!profile) {
     return (
       <div className="flex flex-col items-center justify-center py-24">
-        <HeroSection />
-      </div>
+        <section className="relative overflow-hidden bg-gradient-to-r from-marriagePink to-pink-100 py-20">
+          <div className="absolute inset-0 bg-gradient-to-r from-marriageHotPink/5 to-marriageRed/5"></div>
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center">
+              <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
+                Your Perfect Match
+                <span className="block text-transparent bg-clip-text bg-gradient-to-r from-marriageHotPink to-marriageRed">
+                  Awaits You
+                </span>
+              </h1>
+              <p className="text-xl text-gray-700 mb-10 max-w-3xl mx-auto leading-relaxed">
+                Join our premium matrimonial platform where meaningful connections are made and lifelong partnerships begin.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-6 justify-center">
+                <button className="bg-gradient-to-r from-marriageHotPink to-marriageRed text-white px-10 py-4 rounded-full text-lg font-semibold hover:shadow-2xl hover:scale-105 transform transition-all duration-300">
+                  Find Your Match
+                </button>
+                <button className="border-2 border-marriageHotPink text-marriageHotPink px-10 py-4 rounded-full text-lg font-semibold hover:bg-marriageHotPink hover:text-white transition-all duration-300">
+                  Browse Profiles
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>      </div>
     );
   }
 

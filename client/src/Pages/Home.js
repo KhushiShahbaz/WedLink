@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { LoginModal } from '../Components/loginModal';
 import CoverPage from './CoverPage';
-import Footer from '../Components/Layout/Footer';
+import { Footer } from '../Components/Layout/Footer';
 
 const Home = () => {
   const [showLogin, setShowLogin] = useState(false);
