@@ -3,18 +3,28 @@ import { Footer } from "../Layout/Footer";
 import { NavBar } from "../Layout/navbar";
 
 const UserLayout = ({ children }) => (
-  <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-purple-50/30">
+  <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-purple-50/30 relative overflow-hidden">
     <NavBar />
-    <main className="mx-auto relative">
-      {/* Background decorative elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-gradient-to-r from-purple-200/20 to-pink-200/20 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-gradient-to-r from-blue-200/20 to-purple-200/20 rounded-full blur-3xl"></div>
-      </div>
-      <div className="relative z-10">
-        {children}
-      </div>
+    
+    {/* Enhanced background decorative elements */}
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {/* Animated gradient blobs */}
+      <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-purple-300/30 to-pink-300/30 rounded-full blur-3xl animate-blob"></div>
+      <div className="absolute top-1/3 -left-40 w-80 h-80 bg-gradient-to-br from-blue-300/30 to-purple-300/30 rounded-full blur-3xl animate-blob animation-delay-2000"></div>
+      <div className="absolute bottom-1/3 right-1/4 w-64 h-64 bg-gradient-to-br from-pink-300/30 to-purple-300/30 rounded-full blur-3xl animate-blob animation-delay-4000"></div>
+      
+      {/* Geometric patterns */}
+      <div className="absolute top-20 left-10 w-32 h-32 border border-purple-200/50 rounded-2xl rotate-12 animate-float"></div>
+      <div className="absolute bottom-40 right-20 w-24 h-24 border border-pink-200/50 rounded-full animate-pulse-slow"></div>
+      
+      {/* Grid pattern overlay */}
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%239333ea" fill-opacity="0.03"%3E%3Ccircle cx="30" cy="30" r="1"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-50"></div>
+    </div>
+
+    <main className="relative z-10 min-h-screen">
+      {children}
     </main>
+    
     <Footer/>
   </div>
 );
