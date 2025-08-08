@@ -1,6 +1,8 @@
-import { useEffect, useState } from 'react';
+
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+import { motion } from 'framer-motion';
 import {
   fetchProfileByuserId,
   deleteProfile,
@@ -9,7 +11,9 @@ import { getPreferences } from '../../slice/matchMakingSlice';
 import { fetchPaymentByUserId } from '../../slice/AgencyChatSlice';
 import {
   FiUser, FiMail, FiPhone, FiCalendar, FiBook, FiEdit2,
-  FiTrash2, FiTrendingUp, FiHeart,
+  FiTrash2, FiTrendingUp, FiHeart, FiMapPin, FiBriefcase,
+  FiDollarSign, FiEye, FiLock, FiUnlock, FiSettings,
+  FiShield, FiCamera, FiStar, FiAward
 } from 'react-icons/fi';
 import defaultProfilePic from '../../assets/profile.jfif';
 import { Button } from '../../Components/Layout/Button';
@@ -17,302 +21,397 @@ import PreferenceCard from '../../Components/Phase_2/preferenceCard';
 import { PaymentCard } from '../../Components/Phase_2/paymentDetail';
 import ConfirmationModal from '../../Components/Phase_2/ConfirmationModal';
 import LoadingSpinner from '../../Components/Layout/Loading';
+import PaidUsersVisibilityModal from '../../Components/Phase_2/VisibilityModal';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../context/AuthContext';
-import { fetchProfileVisibility, privateProfileVisibilty, publicProfileVisibilty } from '../../slice/profileVisibilitySlice';
+import { 
+  fetchProfileVisibility, 
+  privateProfileVisibilty, 
+  publicProfileVisibilty 
+} from '../../slice/profileVisibilitySlice';
 
-export default function UserProfileDisplay() {
-  const { id } = useParams();
+const ProfilePageUser = () => {
+  const { userId } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { user } = useAuth()
+  const { user } = useAuth();
+  
   const [profile, setProfile] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [preferences, setPreferences] = useState(null);
-  const [paymentDetail, setPaymentDetail] = useState([]);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [profileDisplay, setProfileDisplay] = useState(false)
-  const [isPublic, setIsPublic] = useState(false)
+  const [payment, setPayment] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [visibilityModalOpen, setVisibilityModalOpen] = useState(false);
+  const [visibility, setVisibility] = useState('private');
+  const [visibilityLoading, setVisibilityLoading] = useState(false);
+
+  const fetchVisibility = async () => {
+    try {
+      const result = await dispatch(fetchProfileVisibility()).unwrap();
+      if (result?.visibility) {
+        setVisibility(result.visibility);
+      }
+    } catch (error) {
+      console.error('Failed to fetch visibility:', error);
+    }
+  };
 
   useEffect(() => {
-    const loadData = async () => {
+    const fetchData = async () => {
       setLoading(true);
       try {
-        if (!id) throw new Error('User ID missing');
-
-        const profileData = await dispatch(fetchProfileByuserId(id)).unwrap();
-        if (!profileData || profileData?.message?.includes('Profile not found')) {
-          setProfile(null);
-        } else {
-          setProfile(profileData);
-          const userId = JSON.parse(localStorage?.getItem('userId'))
-          if (userId != null && userId != profileData?._id) {
-            setProfileDisplay(true)
-          }
+        const [profileResult, preferencesResult, paymentResult] = await Promise.all([
+          dispatch(fetchProfileByuserId(userId)).unwrap(),
+          dispatch(getPreferences()).unwrap(),
+          dispatch(fetchPaymentByUserId(userId)).unwrap(),
+        ]);
+        
+        setProfile(profileResult);
+        setPreferences(preferencesResult);
+        setPayment(paymentResult);
+        
+        // Only fetch visibility if it's the current user's profile
+        if (user?.id === userId || user?.userId === userId) {
+          await fetchVisibility();
         }
-
-
-        const pref = await dispatch(getPreferences(id)).unwrap();
-        setPreferences(pref?.data?.preferences || null);
-
-        const payment = await dispatch(fetchPaymentByUserId(id)).unwrap();
-        setPaymentDetail(payment || []);
-      } catch (err) {
-        setError(err?.message || 'Something went wrong');
+      } catch (error) {
+        console.error('Failed to fetch data:', error);
+        toast.error('Failed to load profile data');
       } finally {
         setLoading(false);
       }
     };
 
-    loadData();
-  }, [dispatch, id]);
+    if (userId) {
+      fetchData();
+    }
+  }, [userId, dispatch, user]);
 
-  const handlePublicToggle = async (profileId, makePublic) => {
+  const handleDeleteProfile = async () => {
     try {
-      // Call redux thunk or API directly
-      if (makePublic) {
-        await dispatch(publicProfileVisibilty({ agencyId: user?.id, profileId })).unwrap();
-        toast.success("Profile made public successfully");
+      await dispatch(deleteProfile()).unwrap();
+      toast.success('Profile deleted successfully');
+      navigate('/phase2/profile/form');
+    } catch (error) {
+      toast.error('Failed to delete profile');
+    }
+    setDeleteModalOpen(false);
+  };
+
+  const handleVisibilityUpdate = async (newVisibility) => {
+    setVisibilityLoading(true);
+    try {
+      if (newVisibility === 'public') {
+        await dispatch(publicProfileVisibilty()).unwrap();
       } else {
-        // Optional: if you plan to implement "make private"
-        await dispatch(privateProfileVisibilty({ agencyId: user?.id, profileId })).unwrap();
-        toast.success("Profile visibility removed");
+        await dispatch(privateProfileVisibilty()).unwrap();
       }
-      fetchVisibility()
-    } catch (err) {
-      toast.error("Failed to update visibility status.");
-      console.error(err);
-    }
-  };
-
-  useEffect(() => {
-    fetchVisibility()
-  }, [user, profile])
-  const fetchVisibility = () => {
-    if (user?.role === 'agency' && profile) {
-      dispatch(fetchProfileVisibility({ userId: profile?._id, agencyId: user?.id })).unwrap().then((res) => {
-        setIsPublic(res)
-      })
-    }
-  }
-  const handleEditProfile = () => {
-    if (profile?._id) {
-      navigate(`/user/addProfile/${profile._id}`);
-    }
-  };
-
-  const handleDeleteProfile = () => {
-    setShowDeleteModal(true);
-  };
-
-  const confirmDeleteProfile = async () => {
-    try {
-      await dispatch(deleteProfile(profile._id)).unwrap();
-      toast.success('Profile Deleted successfully')
-      navigate('/');
-    } catch (err) {
-      setError(err.message || 'Failed to delete profile');
+      setVisibility(newVisibility);
+      toast.success(`Profile visibility updated to ${newVisibility}`);
+      setVisibilityModalOpen(false);
+    } catch (error) {
+      toast.error('Failed to update visibility');
     } finally {
-      setShowDeleteModal(false);
+      setVisibilityLoading(false);
     }
   };
-
 
   if (loading) {
     return (
-      <LoadingSpinner />
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="text-center py-20 text-red-500">
-        <p>Error: {error}</p>
-        <button
-          onClick={() => window.location.reload()}
-          className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-        >
-          Retry
-        </button>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-purple-50 flex items-center justify-center">
+        <LoadingSpinner />
       </div>
     );
   }
 
   if (!profile) {
     return (
-      <div className="flex flex-col items-center justify-center py-24">
-        <section className="relative overflow-hidden bg-gradient-to-r from-marriagePink to-pink-100 py-20">
-          <div className="absolute inset-0 bg-gradient-to-r from-marriageHotPink/5 to-marriageRed/5"></div>
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center">
-              <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-                Your Perfect Match
-                <span className="block text-transparent bg-clip-text bg-gradient-to-r from-marriageHotPink to-marriageRed">
-                  Awaits You
-                </span>
-              </h1>
-              <p className="text-xl text-gray-700 mb-10 max-w-3xl mx-auto leading-relaxed">
-                Join our premium matrimonial platform where meaningful connections are made and lifelong partnerships begin.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-6 justify-center">
-                <button className="bg-gradient-to-r from-marriageHotPink to-marriageRed text-white px-10 py-4 rounded-full text-lg font-semibold hover:shadow-2xl hover:scale-105 transform transition-all duration-300">
-                  Find Your Match
-                </button>
-                <button className="border-2 border-marriageHotPink text-marriageHotPink px-10 py-4 rounded-full text-lg font-semibold hover:bg-marriageHotPink hover:text-white transition-all duration-300">
-                  Browse Profiles
-                </button>
-              </div>
-            </div>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-purple-50 flex items-center justify-center">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="text-center bg-white rounded-3xl shadow-xl p-12 max-w-md mx-4"
+        >
+          <div className="w-20 h-20 bg-gradient-to-r from-purple-100 to-pink-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <FiUser className="w-10 h-10 text-purple-500" />
           </div>
-        </section>      
-        </div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Profile Not Found</h2>
+          <p className="text-gray-600 mb-6">The profile you're looking for doesn't exist or has been removed.</p>
+          <Button onClick={() => navigate('/phase2')} className="bg-gradient-to-r from-purple-500 to-pink-500">
+            Go Back Home
+          </Button>
+        </motion.div>
+      </div>
     );
   }
 
+  const isOwnProfile = user?.id === userId || user?.userId === userId;
 
+  const personalInfo = [
+    { label: 'Full Name', value: profile.name, icon: FiUser, color: 'from-blue-500 to-indigo-500' },
+    { label: 'Age', value: profile.age ? `${profile.age} years` : 'Not specified', icon: FiCalendar, color: 'from-green-500 to-emerald-500' },
+    { label: 'Education', value: profile.education || 'Not specified', icon: FiBook, color: 'from-purple-500 to-violet-500' },
+    { label: 'Occupation', value: profile.occupation || 'Not specified', icon: FiBriefcase, color: 'from-orange-500 to-red-500' },
+    { label: 'Income', value: profile.income || 'Not specified', icon: FiDollarSign, color: 'from-pink-500 to-rose-500' },
+    { label: 'Location', value: profile.address || 'Not specified', icon: FiMapPin, color: 'from-teal-500 to-cyan-500' },
+  ];
 
   return (
-    <div className="min-h-screen w-full max-w-6xl mx-auto py-10 px-4">
-      {/* Profile Card */}
-      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg relative mb-10 border border-gray-200 dark:border-gray-700">
-        {(!profileDisplay && user?.role == 'user') &&
-          <div className="absolute top-4 right-4 flex gap-2 z-10">
-            <Button
-              onClick={handleEditProfile}
-              btnText={<span className="hidden sm:inline">Edit</span>}
-              BtnIcon={FiEdit2}
-              btnColor="marriageHotPink"
-              padding="md:px-4 md:py-2 p-2"
-            />
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-purple-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        {/* Profile Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden mb-8"
+        >
+          {/* Gradient Header */}
+          <div className="bg-gradient-to-r from-purple-600 via-pink-500 to-purple-700 p-8 relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent"></div>
+            <div className="relative flex flex-col lg:flex-row items-center space-y-6 lg:space-y-0 lg:space-x-8">
+              
+              {/* Profile Picture */}
+              <div className="relative">
+                <div className="w-32 h-32 lg:w-40 lg:h-40 rounded-full border-4 border-white/30 overflow-hidden shadow-2xl bg-white">
+                  <img
+                    src={profile.profilePicture || defaultProfilePic}
+                    alt={profile.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                {isOwnProfile && (
+                  <div className="absolute -bottom-2 -right-2 bg-white rounded-full p-3 shadow-lg">
+                    <FiCamera className="w-5 h-5 text-purple-600" />
+                  </div>
+                )}
+              </div>
 
-            <Button
-              onClick={handleDeleteProfile}
-              btnText={<span className="hidden sm:inline">Delete</span>}
-              BtnIcon={FiTrash2}
-              btnColor="marriageHotPink"
-              padding="md:px-4 md:py-2 p-2"
-            />
-          </div>}
-        {
-          user.role === 'agency' &&
-          <div className="absolute top-4 right-4 flex gap-2 z-10">
+              {/* Profile Info */}
+              <div className="text-center lg:text-left flex-1">
+                <h1 className="text-3xl lg:text-4xl font-bold text-white mb-2">{profile.name}</h1>
+                <p className="text-white/80 text-lg mb-4">{profile.occupation || 'Professional'}</p>
+                
+                {/* Status Badges */}
+                <div className="flex flex-wrap justify-center lg:justify-start gap-3 mb-4">
+                  <div className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full flex items-center space-x-2">
+                    {visibility === 'public' ? (
+                      <FiUnlock className="w-4 h-4 text-white" />
+                    ) : (
+                      <FiLock className="w-4 h-4 text-white" />
+                    )}
+                    <span className="text-white text-sm font-medium">
+                      {visibility === 'public' ? 'Public Profile' : 'Private Profile'}
+                    </span>
+                  </div>
+                  <div className="bg-green-500/20 backdrop-blur-sm px-4 py-2 rounded-full flex items-center space-x-2">
+                    <FiShield className="w-4 h-4 text-white" />
+                    <span className="text-white text-sm font-medium">Verified</span>
+                  </div>
+                </div>
 
-            <div className="text-lg m-1 text-gray-600 dark:text-gray-300 flex items-center gap-2">
-              <label htmlFor={`public-${profile?._id}`} className="flex items-center gap-1 cursor-pointer">
-                <input
-                  id={`public-${profile?._id}`}
-                  type="checkbox"
-                  checked={isPublic || false}
-                  onChange={(e) => handlePublicToggle(profile?._id, e.target.checked)}
-                  className="form-checkbox h-4 w-4 text-green-600"
+                {/* Action Buttons */}
+                {isOwnProfile && (
+                  <div className="flex flex-wrap justify-center lg:justify-start gap-3">
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => navigate(`/phase2/profile/form`)}
+                      className="bg-white/20 backdrop-blur-sm text-white px-6 py-3 rounded-full font-semibold hover:bg-white/30 transition-all duration-200 flex items-center space-x-2"
+                    >
+                      <FiEdit2 className="w-4 h-4" />
+                      <span>Edit Profile</span>
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => setVisibilityModalOpen(true)}
+                      className="bg-white/20 backdrop-blur-sm text-white px-6 py-3 rounded-full font-semibold hover:bg-white/30 transition-all duration-200 flex items-center space-x-2"
+                    >
+                      <FiSettings className="w-4 h-4" />
+                      <span>Privacy</span>
+                    </motion.button>
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            {/* Decorative elements */}
+            <div className="absolute -top-8 -right-8 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+            <div className="absolute -bottom-8 -left-8 w-40 h-40 bg-white/5 rounded-full blur-3xl"></div>
+          </div>
+        </motion.div>
+
+        {/* Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          
+          {/* Left Column - Personal Info */}
+          <div className="lg:col-span-2 space-y-8">
+            
+            {/* Personal Information */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden"
+            >
+              <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-6">
+                <h2 className="text-2xl font-bold text-white flex items-center space-x-3">
+                  <FiUser className="w-6 h-6" />
+                  <span>Personal Information</span>
+                </h2>
+              </div>
+              
+              <div className="p-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {personalInfo.map(({ label, value, icon: Icon, color }, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                      className="flex items-center space-x-4 p-4 rounded-2xl border border-gray-100 hover:border-purple-200 hover:bg-gradient-to-r hover:from-purple-50/50 hover:to-pink-50/50 transition-all duration-300"
+                    >
+                      <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${color} flex items-center justify-center shadow-lg`}>
+                        <Icon className="w-6 h-6 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-semibold text-gray-600 uppercase tracking-wide">{label}</h3>
+                        <p className="text-gray-900 font-medium">{value}</p>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+
+                {/* Bio Section */}
+                {profile.bio && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.7 }}
+                    className="mt-6 p-6 bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl border border-purple-100"
+                  >
+                    <h3 className="text-lg font-semibold text-purple-800 mb-3 flex items-center space-x-2">
+                      <FiHeart className="w-5 h-5" />
+                      <span>About Me</span>
+                    </h3>
+                    <p className="text-purple-700 leading-relaxed">{profile.bio}</p>
+                  </motion.div>
+                )}
+              </div>
+            </motion.div>
+
+            {/* Preferences Section */}
+            {preferences && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+              >
+                <PreferenceCard 
+                  preferences={preferences} 
+                  onEdit={() => navigate('/phase2/match-making')}
                 />
-                Make Profile Public
-              </label>
-            </div>
+              </motion.div>
+            )}
           </div>
-        }
-        <div className="md:flex items-center">
-          <div className="md:w-1/3 p-8 flex justify-center">
-            <img
-              src={profile.pic ? `http://localhost:5000/${profile.pic}` : defaultProfilePic}
-              onError={(e) => (e.target.src = defaultProfilePic)}
-              alt={profile.name || 'Profile'}
-              className="h-56 w-56 object-cover rounded-full border-4 border-white shadow-xl"
-            />
-          </div>
-          <div className="md:w-2/3 p-6 md:pr-10">
-            <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">{profile.name || 'Unnamed'}</h1>
-            <div className="space-y-2 text-gray-600 dark:text-gray-300">
-              <div className="flex items-center"><FiUser className="mr-2" /><span>{profile.gender || 'N/A'}, {profile.age || '?'} years</span></div>
-              <div className="flex items-center"><FiHeart className="mr-2" /><span>{profile.maritalStatus || 'Not specified'}</span></div>
-              <div className="flex items-center"><FiTrendingUp className="mr-2" /><span>{profile.height || 'Not specified'} tall</span></div>
-              <div className="flex items-center"><FiCalendar className="mr-2" /><span>Member since {profile.createdAt ? new Date(profile.createdAt).toLocaleDateString() : 'N/A'}</span></div>
-            </div>
-            <div className="flex flex-wrap gap-2 mt-4">
-              {profile.religion && (
-                <span className="text-xs font-medium px-3 py-1 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
-                  {profile.religion}
-                </span>
-              )}
-              {profile.caste && (
-                <span className="text-xs font-medium px-3 py-1 rounded-full bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200">
-                  {profile.caste}
-                </span>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
 
-      {/* Education & Personal Details */}
-      <div className="grid md:grid-cols-2 gap-8 mb-10">
-        <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-md p-6 border border-gray-200 dark:border-gray-700">
-          <h2 className="text-xl font-semibold mb-4 flex items-center text-blue-600 dark:text-blue-400">
-            <FiBook className="mr-2" /> Education & Career
-          </h2>
-          <div className="space-y-4 text-gray-600 dark:text-gray-300">
-            <div><h3 className="font-medium">Education</h3><p>{profile.education || 'Not specified'}</p></div>
-            <div><h3 className="font-medium">Occupation</h3><p>{profile.occupation || 'Not specified'}</p></div>
-            <div><h3 className="font-medium">Income</h3><p>{profile.income || 'Not specified'}</p></div>
-          </div>
-        </div>
+          {/* Right Column - Additional Info */}
+          <div className="space-y-8">
+            
+            {/* Payment Information */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
+            >
+              <PaymentCard payment={payment} />
+            </motion.div>
 
-        <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-md p-6 border border-gray-200 dark:border-gray-700">
-          <h2 className="text-xl font-semibold mb-4 flex items-center text-green-600 dark:text-green-400">
-            <FiUser className="mr-2" /> Personal Details
-          </h2>
-          <div className="space-y-4 text-gray-600 dark:text-gray-300">
-            <div className="space-y-2">
-              {profile?.userId?.email && <div className="flex items-center"><FiMail className="mr-2" /><span>{profile.userId.email}</span></div>}
-              {profile?.userId?.phone && <div className="flex items-center"><FiPhone className="mr-2" /><span>{profile.userId.phone}</span></div>}
-            </div>
-            <div><h3 className="font-medium">About Me</h3><p className="whitespace-pre-line">{profile.bio || 'No bio provided'}</p></div>
-          </div>
-        </div>
-      </div>
-
-      {/* Gallery */}
-      {Array.isArray(profile.gallery) && profile.gallery.length > 0 && (
-        <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-md p-6 mb-10 border border-gray-200 dark:border-gray-700">
-          <h2 className="text-xl font-semibold mb-4 text-pink-600 dark:text-pink-400">Gallery</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {profile.gallery.map((img, index) => (
-              <div key={index} className="relative group">
-                <img src={img} alt={`Gallery ${index + 1}`} className="h-48 w-full object-cover rounded-xl shadow-sm" />
-                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100">
-                  <button className="p-2 bg-white rounded-full text-red-500 hover:bg-red-100">
-                    <FiTrash2 className="w-5 h-5" />
-                  </button>
+            {/* Profile Stats */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8 }}
+              className="bg-white rounded-3xl shadow-lg border border-gray-100 p-6"
+            >
+              <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center space-x-2">
+                <FiTrendingUp className="w-5 h-5" />
+                <span>Profile Stats</span>
+              </h3>
+              
+              <div className="space-y-4">
+                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl">
+                  <div className="flex items-center space-x-3">
+                    <FiEye className="w-5 h-5 text-blue-600" />
+                    <span className="font-medium text-blue-800">Profile Views</span>
+                  </div>
+                  <span className="font-bold text-blue-900">142</span>
+                </div>
+                
+                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl">
+                  <div className="flex items-center space-x-3">
+                    <FiHeart className="w-5 h-5 text-green-600" />
+                    <span className="font-medium text-green-800">Interests</span>
+                  </div>
+                  <span className="font-bold text-green-900">23</span>
+                </div>
+                
+                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl">
+                  <div className="flex items-center space-x-3">
+                    <FiStar className="w-5 h-5 text-purple-600" />
+                    <span className="font-medium text-purple-800">Rating</span>
+                  </div>
+                  <span className="font-bold text-purple-900">4.8/5</span>
                 </div>
               </div>
-            ))}
+            </motion.div>
+
+            {/* Quick Actions */}
+            {isOwnProfile && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.0 }}
+                className="bg-white rounded-3xl shadow-lg border border-gray-100 p-6"
+              >
+                <h3 className="text-xl font-bold text-gray-900 mb-6">Quick Actions</h3>
+                
+                <div className="space-y-3">
+                  <button
+                    onClick={() => setDeleteModalOpen(true)}
+                    className="w-full flex items-center space-x-3 p-4 text-left hover:bg-red-50 rounded-2xl transition-colors duration-200 group"
+                  >
+                    <FiTrash2 className="w-5 h-5 text-red-500 group-hover:text-red-600" />
+                    <span className="font-medium text-red-600 group-hover:text-red-700">Delete Profile</span>
+                  </button>
+                </div>
+              </motion.div>
+            )}
           </div>
         </div>
-      )}
+      </div>
 
-      {/* Preferences */}
-      {preferences && (
-        <div className="mb-10">
-          <PreferenceCard preferences={preferences} />
-        </div>
-      )}
+      {/* Modals */}
+      <ConfirmationModal
+        isOpen={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onConfirm={handleDeleteProfile}
+        title="Delete Profile"
+        message="Are you sure you want to delete your profile? This action cannot be undone."
+        confirmText="Delete"
+        type="danger"
+      />
 
-      {/* Payment Details */}
-      {(paymentDetail.length > 0 && !profileDisplay) && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {paymentDetail.map((payment) => (
-            <PaymentCard key={payment._id} payment={payment} />
-          ))}
-        </div>
-      )}
-      {showDeleteModal && (
-        <ConfirmationModal
-          onClickCancel={() => setShowDeleteModal(false)}
-          onClickSubmit={confirmDeleteProfile}
-          cnfrmText={'Are you sure you want to delete your profile? This action cannot be undone.'} />
-      )}
-
+      <PaidUsersVisibilityModal
+        isOpen={visibilityModalOpen}
+        onClose={() => setVisibilityModalOpen(false)}
+        onUpdateVisibility={handleVisibilityUpdate}
+        currentVisibility={visibility}
+        loading={visibilityLoading}
+      />
     </div>
   );
-}
+};
+
+export default ProfilePageUser;

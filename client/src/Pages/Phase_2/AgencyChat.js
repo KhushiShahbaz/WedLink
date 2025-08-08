@@ -1,371 +1,408 @@
+
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchMessages, sendMessage, clearMessages, GetSession, ReadMessages, createPayment, updatePayment, fetchLatestPayment } from '../../slice/AgencyChatSlice';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  fetchMessages, 
+  sendMessage, 
+  clearMessages, 
+  GetSession, 
+  ReadMessages, 
+  createPayment, 
+  updatePayment, 
+  fetchLatestPayment 
+} from '../../slice/AgencyChatSlice';
 import { getSocket, disconnectSocket } from '../../socket';
-import { FiDollarSign, FiFileText } from 'react-icons/fi';
+import { 
+  FiDollarSign, 
+  FiFileText, 
+  FiSend, 
+  FiPaperclip, 
+  FiPhone, 
+  FiVideo, 
+  FiMoreVertical,
+  FiUser,
+  FiClock,
+  FiCheck,
+  FiCheckCircle
+} from 'react-icons/fi';
 import { useAuth } from '../../context/AuthContext';
 import MatchmakingForm from './MatchMakingForm';
 import { PaymentRequestModal } from '../../Components/Phase_2/paymentModal';
 import { createAccount } from '../../slice/savedAccountsSlice';
 import { UploadProofModal } from '../../Components/Phase_2/proofModal';
 import { PaymentVerificationModal } from '../../Components/Phase_2/paymentVerificationModal';
+import { toast } from 'react-toastify';
 
-const AgencyChat = ({ isAdmin, agencyId, userId, disableSend }) => {
+const AgencyChat = ({ candidateId, candidateName, onClose }) => {
   const dispatch = useDispatch();
-  const { sessions, messages } = useSelector((state) => state.chat);
-  const { user } = useAuth()
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [selectedSession, setSelectedSession] = useState(null);
-  const [chatInput, setChatInput] = useState('');
-  const [socket, setSocket] = useState(null);
-  const [requestingDetails, setRequestingDetails] = useState(false);
-  const messagesEndRef = useRef(null); // ✅ ref to scroll into view
-  const [showModal, setShowModal] = useState(false)
-  const [showPayment, setShowPayment] = useState(false)
-  const [requestingPayment, setRequestingPayment] = useState(false)
-  const [paymentConfirmation, setPaymentConfirmation] = useState(false)
-  const [selectedRequest, setSelectedRequest] = useState(null);
-  const [selectedPayment, setSelectedPayment] = useState({})
-  const [VerificationModal, setVerificationModal] = useState(false)
+  const { user } = useAuth();
+  const messagesEndRef = useRef(null);
+  
+  const { messages, loading } = useSelector(state => state.agencyChat);
+  
+  const [newMessage, setNewMessage] = useState('');
+  const [sendingMessage, setSendingMessage] = useState(false);
+  const [paymentModalOpen, setPaymentModalOpen] = useState(false);
+  const [proofModalOpen, setProofModalOpen] = useState(false);
+  const [verificationModalOpen, setVerificationModalOpen] = useState(false);
+  const [matchmakingModalOpen, setMatchmakingModalOpen] = useState(false);
+  const [selectedProof, setSelectedProof] = useState(null);
+  const [socketConnected, setSocketConnected] = useState(false);
+
   useEffect(() => {
-    if (agencyId && user?.id && user?.role === 'user') {
-      dispatch(GetSession({ agencyId, userId: user.id }))
-        .unwrap()
-        .then(async (session) => {
-
-          setSelectedSession(session);
-
+    if (candidateId) {
+      dispatch(clearMessages());
+      dispatch(fetchMessages(candidateId));
+      
+      // Setup socket connection
+      const socket = getSocket();
+      if (socket) {
+        socket.emit('join_room', { roomId: candidateId });
+        
+        socket.on('connect', () => setSocketConnected(true));
+        socket.on('disconnect', () => setSocketConnected(false));
+        
+        socket.on('new_message', (message) => {
+          dispatch(fetchMessages(candidateId));
         });
-    } else if (agencyId && userId && user?.role === 'agency') {
-      dispatch(GetSession({ agencyId, userId }))
-        .unwrap()
-        .then((session) => {
-          setSelectedSession(session);
-
-          // ✅ Auto-select
-        });
-    }
-  }, [agencyId, user]);
-
-  useEffect(() => {
-    setLoading(true);
-
-    if (selectedSession?._id) {
-      fetchPayment();// ✅ Auto-select
-    }
-  }, [selectedSession])
-  useEffect(() => {
-    dispatch(ReadMessages({ sessionId: selectedSession?._id, reader: user?.role }))
-      .unwrap()
-      .then((session) => {
-        console.log(session)
-        setLoading(false); // ✅ update loading
-      })
-      .catch((err) => {
-        setError("Failed to fetch sessions");
-        setLoading(false); // ✅ also update on error
-      });
-
-  }, [dispatch]);
-
-  const scrollToBottom = () => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  // Setup socket
-  useEffect(() => {
-    if (!selectedSession) return;
-
-    const s = getSocket();
-    setSocket(s);
-
-    s.emit('joinSession', { sessionId: selectedSession._id }); // ✅ Join new session
-    dispatch(fetchMessages({ sessionId: selectedSession._id }));
-
-    s.on('newMessage', (msg) => {
-      if (msg.sessionId === selectedSession._id) {
-        dispatch(fetchMessages({ sessionId: selectedSession._id }));
       }
-    });
+    }
 
     return () => {
-      disconnectSocket();
-      dispatch(clearMessages());
+      const socket = getSocket();
+      if (socket) {
+        socket.off('new_message');
+        socket.off('connect');
+        socket.off('disconnect');
+      }
     };
-  }, [selectedSession]);
+  }, [candidateId, dispatch]);
 
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
-  const handleSend = async (e) => {
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const handleSendMessage = async (e) => {
     e.preventDefault();
-    if (!chatInput|| !selectedSession) return;
-    const payload = {
-      sessionId: selectedSession?._id || '',
-      sender: user?.role,
-      type: 'text',
-      text: chatInput,
-    };
-    await dispatch(sendMessage(payload));
-    setChatInput('');
-  };
+    if (!newMessage.trim() || sendingMessage) return;
 
-  const handleRequestDetails = async () => {
-    if (user?.role === 'agency') {
-      setRequestingDetails(true);
-
-
-      const payload = {
-        sessionId: selectedSession._id,
-        sender: 'agency',
-        type: 'requestForm',
-        text: 'Please fill out the matchmaking form.'
-      };
-      await dispatch(sendMessage(payload));
-
-
-      setTimeout(() => setRequestingDetails(false), 1000);
-    }
-  };
-
-
-  const handleRequestPayment = async (paymentDetails) => {
-    setRequestingPayment(true);
-
-    const paymentMessage =
-      `💳 *Payment Request*\n` +
-      `Amount: ${paymentDetails.currency}${paymentDetails.amount}\n` +
-      `For: "${paymentDetails.description}" Matchmaking Process\n` +
-      `\n🏦 *Bank Details*:\n` +
-      `Account Title: ${paymentDetails.accountTitle}\n` +
-      `Account Number: ${paymentDetails.accountNumber}\n` +
-      `Bank Name: ${paymentDetails.bankName}\n` +
-      (paymentDetails.dueDate
-        ? `\n📅 *Due Date*: ${new Date(paymentDetails.dueDate).toLocaleDateString()}\n`
-        : '') +
-      `\nAfter sending payment, please share a confirmation message. ✅`;
-
-    const payload = {
-      sessionId: selectedSession._id,
-      sender: 'agency',
-      type: 'paymentRequest',
-      text: paymentMessage,
-      formData: {
-        amount: paymentDetails.amount,
-        currency: paymentDetails.currency,
-        description: paymentDetails.description,
-        dueDate: paymentDetails.dueDate,
-        bankName: paymentDetails.bankName,
-        accountNumber: paymentDetails.accountNumber,
-        accountTitle: paymentDetails.accountTitle,
-        status: 'pending',
-      }
-    };
-
+    setSendingMessage(true);
     try {
-      // ✅ Send data to backend for saving in PaymentDetail schema
-      const paymentPayload = {
-        sessionId: selectedSession._id,
-        userId: selectedSession.userId,
-        agencyId: user?.id, // or however you get the candidate's userId
-        amount: paymentDetails.amount,
-        currency: paymentDetails.currency,
-        description: paymentDetails.description,
-        dueDate: paymentDetails.dueDate,
-        bankName: paymentDetails.bankName,
-        accountNumber: paymentDetails.accountNumber,
-        accountTitle: paymentDetails.accountTitle,
-      };
-
-      await dispatch(createPayment(paymentPayload)).then(async (res) => {
-        if (res) {
-          setShowPayment(false);
-
-          await dispatch(sendMessage(payload));
-          const accountPayload = {
-            agencyId: user.id, // or get agency ID from session/context
-            accountTitle: paymentDetails.accountTitle,
-            accountNumber: paymentDetails.accountNumber,
-            bankName: paymentDetails.bankName
-          }
-          await dispatch(createAccount(accountPayload))
-        }
-      })
-
-
-
-
+      await dispatch(sendMessage({
+        receiverId: candidateId,
+        content: newMessage,
+        messageType: 'text'
+      })).unwrap();
+      
+      setNewMessage('');
+      const socket = getSocket();
+      if (socket) {
+        socket.emit('send_message', {
+          roomId: candidateId,
+          content: newMessage,
+          senderId: user.id
+        });
+      }
     } catch (error) {
-      console.error('Failed to send payment request:', error);
+      toast.error('Failed to send message');
     } finally {
-      setRequestingPayment(false);
+      setSendingMessage(false);
     }
   };
 
-
-  const fetchPayment = async () => {
-    await dispatch(fetchLatestPayment(selectedSession?._id)).unwrap().then((data) => {
-      setSelectedRequest(data?.data);
-      setLoading(false);
-    });
-
-
+  const handlePaymentRequest = async (paymentData) => {
+    try {
+      await dispatch(createPayment(paymentData)).unwrap();
+      toast.success('Payment request sent successfully');
+      setPaymentModalOpen(false);
+    } catch (error) {
+      toast.error('Failed to send payment request');
+    }
   };
 
+  const formatTime = (timestamp) => {
+    return new Date(timestamp).toLocaleTimeString([], { 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    });
+  };
+
+  const formatDate = (timestamp) => {
+    const date = new Date(timestamp);
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    if (date.toDateString() === today.toDateString()) {
+      return 'Today';
+    } else if (date.toDateString() === yesterday.toDateString()) {
+      return 'Yesterday';
+    } else {
+      return date.toLocaleDateString();
+    }
+  };
 
   return (
-    <div className="p-0 md:p-4 w-full md:gap-6">
-      {/* Chat area */}
-      <div className="w-full dark:bg-gray-800 bg-white rounded-3xl shadow h-full">
-        <div className="px-6 py-4 border-b border-marriagePink/30 flex items-center gap-3 sticky top-0 z-10 rounded-t-3xl">
-          {selectedSession && (
-            <>
-              <div className="min-w-0 flex flex-col">
-                <div className="font-bold dark:text-white truncate capitalize text-lg">
-                  {selectedSession.userId?.name || 'Anonymous User'}
-                </div>
-                <div className="text-xs dark:text-white/80 truncate"> {selectedSession.userId?.email}</div>
+    <div className="flex flex-col h-screen bg-gradient-to-br from-slate-50 to-purple-50">
+      
+      {/* Chat Header */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-white border-b border-gray-200 shadow-sm"
+      >
+        <div className="flex items-center justify-between p-4">
+          <div className="flex items-center space-x-4">
+            <div className="relative">
+              <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                <FiUser className="w-6 h-6 text-white" />
               </div>
-              {(user.role === 'user') &&
-                (<button
-                  className="ml-auto p-2 rounded-full bg-green-200 text-green-600 hover:bg-green-100 transition shadow"
-                  title="Payment Confirmation"
-
-                  onClick={() => setPaymentConfirmation(true)}
-                >
-                  <FiDollarSign className="text-xl" />
-                </button>)}
-              {(user.role === 'agency') &&
-                (<button
-                  className="ml-auto p-2 rounded-full bg-white text-green-600 hover:bg-green-100 transition shadow"
-                  title="Request Payment"
-                  disabled={requestingPayment}
-                  onClick={() => setShowPayment(true)}
-                >
-                  <FiDollarSign className="text-xl" />
-                </button>)}
-              {(user.role === 'agency') && (<button
-                className=" p-2 rounded-full bg-white text-marriageHotPink hover:bg-marriagePink hover:text-white transition shadow"
-                title="Request Form"
-                disabled={requestingDetails}
-                onClick={handleRequestDetails}
-              >
-                <FiFileText className="text-xl" />
-              </button>)}
-            </>
-          )}
+              {socketConnected && (
+                <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
+              )}
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900">{candidateName}</h3>
+              <p className="text-sm text-gray-500">
+                {socketConnected ? 'Online' : 'Offline'}
+              </p>
+            </div>
+          </div>
+          
+          <div className="flex items-center space-x-2">
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              className="p-2 text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded-full transition-colors duration-200"
+            >
+              <FiPhone className="w-5 h-5" />
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              className="p-2 text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded-full transition-colors duration-200"
+            >
+              <FiVideo className="w-5 h-5" />
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              className="p-2 text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded-full transition-colors duration-200"
+            >
+              <FiMoreVertical className="w-5 h-5" />
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={onClose}
+              className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors duration-200"
+            >
+              ×
+            </motion.button>
+          </div>
         </div>
+      </motion.div>
 
+      {/* Quick Actions */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className="bg-white border-b border-gray-100 p-4"
+      >
+        <div className="flex flex-wrap gap-2">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setPaymentModalOpen(true)}
+            className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-2 rounded-full text-sm font-medium hover:shadow-lg transition-all duration-200 flex items-center space-x-2"
+          >
+            <FiDollarSign className="w-4 h-4" />
+            <span>Request Payment</span>
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setMatchmakingModalOpen(true)}
+            className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-full text-sm font-medium hover:shadow-lg transition-all duration-200 flex items-center space-x-2"
+          >
+            <FiFileText className="w-4 h-4" />
+            <span>Matchmaking Form</span>
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setProofModalOpen(true)}
+            className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-4 py-2 rounded-full text-sm font-medium hover:shadow-lg transition-all duration-200 flex items-center space-x-2"
+          >
+            <FiPaperclip className="w-4 h-4" />
+            <span>Upload Proof</span>
+          </motion.button>
+        </div>
+      </motion.div>
 
-        <div className="h-[66vh] lg:h-[60vh] overflow-y-auto px-4 py-4 custom-scrollbar">
-          {selectedSession ? (
-            messages.length === 0 ? (
-              <div className="text-gray-400 text-center mt-8">No messages yet.</div>
-            ) : (
-              <>
-                {messages.map((msg, idx) => (
-                  <div key={idx} className={`mb-3 flex ${msg.sender === user?.role ? 'justify-end' : 'justify-start'} animate-fadeIn`}>
-                    <div
-                      className={`relative max-w-[75%] px-4 py-2 rounded-2xl shadow-lg ${msg.sender === user?.role
-                        ? 'bg-marriageHotPink text-white rounded-br-none mr-2'
-                        : 'bg-white text-marriageHotPink border border-marriagePink rounded-bl-none ml-2'}`}
-                    >
-                      <div className="whitespace-pre-line break-words text-base">
-                        {msg.type === 'formResponse' ? (
-                        JSON.stringify(JSON.parse(msg.formData), null, 2)
-                        ) : msg.type === 'requestForm' ? (
-                          <a onClick={() => setShowModal(true)} className='cursor-pointer underline'>{msg.text}</a>
-                        ) : msg.type === 'paymentConfirmation' ? (
-                          <div>
-                            <a onClick={() => {
-                              setSelectedPayment(msg)
-                              setVerificationModal(true)
-                            }} className='cursor-pointer underline'>{msg.text}</a>
-                            {msg.formData.proofImage && (
-                              <img
-                                src={`http://localhost:5000/${msg.formData.proofImage}`}
-                                alt="Payment Proof"
-                                className="mt-2 md:max-w-xs w-70 rounded border"
-                              />
+      {/* Messages Container */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {loading ? (
+          <div className="flex items-center justify-center h-full">
+            <div className="w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        ) : messages.length === 0 ? (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="flex flex-col items-center justify-center h-full text-center"
+          >
+            <div className="w-20 h-20 bg-gradient-to-r from-purple-100 to-pink-100 rounded-full flex items-center justify-center mb-4">
+              <FiUser className="w-10 h-10 text-purple-500" />
+            </div>
+            <h3 className="text-xl font-semibold text-gray-700 mb-2">Start the conversation</h3>
+            <p className="text-gray-500">Send a message to begin chatting with {candidateName}</p>
+          </motion.div>
+        ) : (
+          <AnimatePresence>
+            {messages.map((message, index) => {
+              const isOwn = message.senderId === user?.id;
+              const showDate = index === 0 || 
+                formatDate(message.createdAt) !== formatDate(messages[index - 1]?.createdAt);
+              
+              return (
+                <div key={message._id}>
+                  {/* Date Separator */}
+                  {showDate && (
+                    <div className="flex justify-center my-4">
+                      <span className="bg-gray-200 text-gray-600 text-xs px-3 py-1 rounded-full">
+                        {formatDate(message.createdAt)}
+                      </span>
+                    </div>
+                  )}
+                  
+                  {/* Message */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -20, scale: 0.95 }}
+                    transition={{ duration: 0.3 }}
+                    className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl shadow-sm ${
+                      isOwn 
+                        ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white' 
+                        : 'bg-white text-gray-900 border border-gray-200'
+                    }`}>
+                      <p className="break-words">{message.content}</p>
+                      <div className={`flex items-center justify-end space-x-1 mt-2 ${
+                        isOwn ? 'text-white/70' : 'text-gray-500'
+                      }`}>
+                        <span className="text-xs">{formatTime(message.createdAt)}</span>
+                        {isOwn && (
+                          <div className="flex space-x-1">
+                            {message.read ? (
+                              <FiCheckCircle className="w-3 h-3" />
+                            ) : (
+                              <FiCheck className="w-3 h-3" />
                             )}
                           </div>
-                        ) : (
-                          msg.text
                         )}
                       </div>
-                      <div className="text-xs text-right mt-1 opacity-60">
-                        {msg.sender === 'agency' ? 'You' : 'User'} — {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                      </div>
                     </div>
-                  </div>
-                ))}
-                <div ref={messagesEndRef} />
-              </>
-            )
-          ) : (
-            <div className="text-gray-400 flex-1 flex items-center justify-center">Select a chat to view messages</div>
-          )}
-        </div>
-
-        <form className="flex gap-2 items-end mt-auto dark:bg-gray-800 px-6 py-4 border-t border-marriagePink/30 bg-white sticky bottom-0 rounded-b-3xl">
-          <input
-            type="text"
-            className="flex-1 px-4 py-2 rounded-full border-2 border-marriagePink focus:ring-2 focus:ring-marriageHotPink focus:outline-none bg-white text-marriageHotPink shadow"
-            placeholder={disableSend ? 'Sending disabled' : 'Type your message...'}
-            value={chatInput}
-            onChange={(e) => setChatInput(e.target.value)}
-            disabled={disableSend}
-          />
-          <button
-            onClick={handleSend}
-            // type="submit"
-            className="px-4 py-2 rounded-full bg-marriageHotPink text-white font-bold hover:bg-marriageRed transition shadow text-lg"
-            // disabled={disableSend}
-            title="Send"
-          >
-            Send
-          </button>
-        </form>
-        {showPayment && <PaymentRequestModal
-          onClose={() => setShowPayment(false)}
-          onRequestPayment={handleRequestPayment}
-          isLoading={requestingPayment}
-        />}
-        {paymentConfirmation && selectedRequest && (
-          <UploadProofModal
-            paymentData={selectedRequest}
-            onClose={() => {
-              setSelectedRequest(null);
-              setPaymentConfirmation(false);
-            }}
-            setPaymentConfirmation={setPaymentConfirmation}
-            selectedSession={selectedSession}
-          />
+                  </motion.div>
+                </div>
+              );
+            })}
+          </AnimatePresence>
         )}
-        {(VerificationModal && selectedPayment && user.role === 'agency')
-          &&
-          <PaymentVerificationModal
-            payment={selectedPayment}
-            onClose={() => setVerificationModal(false)}
-            selectedSession={selectedSession}
-
-          />}
-
-        {(showModal && user.role === 'user') && <MatchmakingForm onClose={() => setShowModal(false)} selectedSession={selectedSession} />}
+        <div ref={messagesEndRef} />
       </div>
+
+      {/* Message Input */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="bg-white border-t border-gray-200 p-4"
+      >
+        <form onSubmit={handleSendMessage} className="flex items-end space-x-3">
+          <div className="flex-1">
+            <div className="relative">
+              <textarea
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                placeholder="Type your message..."
+                rows="1"
+                className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none bg-gray-50"
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSendMessage(e);
+                  }
+                }}
+              />
+              <button
+                type="button"
+                className="absolute right-3 bottom-3 p-1 text-gray-400 hover:text-purple-600 transition-colors duration-200"
+              >
+                <FiPaperclip className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+          <motion.button
+            type="submit"
+            disabled={!newMessage.trim() || sendingMessage}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-3 rounded-full hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+          >
+            {sendingMessage ? (
+              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+            ) : (
+              <FiSend className="w-5 h-5" />
+            )}
+          </motion.button>
+        </form>
+      </motion.div>
+
+      {/* Modals */}
+      <PaymentRequestModal
+        isOpen={paymentModalOpen}
+        onClose={() => setPaymentModalOpen(false)}
+        onSubmit={handlePaymentRequest}
+        loading={false}
+      />
+
+      <UploadProofModal
+        isOpen={proofModalOpen}
+        onClose={() => setProofModalOpen(false)}
+        onUpload={(proof) => {
+          setSelectedProof(proof);
+          setVerificationModalOpen(true);
+        }}
+      />
+
+      <PaymentVerificationModal
+        isOpen={verificationModalOpen}
+        onClose={() => setVerificationModalOpen(false)}
+        proof={selectedProof}
+        onVerify={() => {
+          setVerificationModalOpen(false);
+          setProofModalOpen(false);
+        }}
+      />
+
+      {matchmakingModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <MatchmakingForm onClose={() => setMatchmakingModalOpen(false)} />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
 export default AgencyChat;
-
-
-
