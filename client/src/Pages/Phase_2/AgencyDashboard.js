@@ -12,8 +12,8 @@ import {
   FaHeart,
   FaChartLine,
   FaCheckCircle,
-  FaTrendingUp,
-  FaTrendingDown
+  // FaTrendingUp,
+  // FaTrendingDown
 } from 'react-icons/fa';
 
 const iconMap = {
@@ -113,11 +113,11 @@ const StatsCard = ({ title, value, icon: Icon, color, trend }) => {
                 ? 'bg-green-100 text-green-700' 
                 : 'bg-red-100 text-red-700'
             }`}>
-              {trend.value > 0 ? (
+              {/* {trend.value > 0 ? (
                 <FaTrendingUp className="w-3 h-3" />
               ) : (
                 <FaTrendingDown className="w-3 h-3" />
-              )}
+              )} */}
               <span>{Math.abs(trend.value)}%</span>
             </div>
           )}

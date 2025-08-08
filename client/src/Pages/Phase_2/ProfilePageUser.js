@@ -165,7 +165,8 @@ export default function UserProfileDisplay() {
               </div>
             </div>
           </div>
-        </section>      </div>
+        </section>      
+        </div>
     );
   }
 
