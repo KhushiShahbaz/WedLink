@@ -202,8 +202,9 @@ export const AgencyProfileDisplay = () => {
                   </motion.div>
                 )}
               </div>
+            </div>
 
-              {/* Action Buttons */}
+            {/* Action Buttons */}
               <div className="absolute top-6 left-6 flex gap-3">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
