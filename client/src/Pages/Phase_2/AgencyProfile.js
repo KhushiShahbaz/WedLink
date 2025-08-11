@@ -200,8 +200,8 @@ export const AgencyProfileDisplay = () => {
                     <ShieldCheck className="w-5 h-5 mr-2" />
                     <span className="font-semibold">Verified</span>
                   </motion.div>
-                )}
-              </div>
+                
+              </div>)}
 
               {/* Action Buttons */}
               <div className="absolute top-6 left-6 flex gap-3">
