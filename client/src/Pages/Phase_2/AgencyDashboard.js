@@ -320,7 +320,7 @@ const AgencyDashboard = () => {
               >
                 <action.icon className="w-8 h-8 text-gray-600 dark:text-gray-300 group-hover:text-purple-600 dark:group-hover:text-purple-400 mb-2" />
                 <span className="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-purple-700 dark:group-hover:text-purple-400">{action.title}</span>
-              </motion.div>
+              </motion.button>
             ))}
           </div>
         </div>
