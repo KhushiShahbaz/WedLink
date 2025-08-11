@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FiEdit2, FiHeart, FiMapPin, FiBook, FiBriefcase } from 'react-icons/fi';
@@ -36,7 +35,7 @@ const PreferenceCard = ({ preferences, onEdit }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className="bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden group hover:shadow-2xl transition-all duration-500"
+      className="bg-white dark:bg-gray-800 rounded-3xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden group hover:shadow-2xl transition-all duration-500"
     >
       {/* Header with gradient */}
       <div className="bg-gradient-to-r from-purple-500 via-pink-500 to-purple-600 p-6 relative overflow-hidden">
@@ -55,7 +54,7 @@ const PreferenceCard = ({ preferences, onEdit }) => {
             <FiEdit2 className="w-5 h-5" />
           </motion.button>
         </div>
-        
+
         {/* Decorative circles */}
         <div className="absolute -top-4 -right-4 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
         <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-white/5 rounded-full blur-2xl"></div>
@@ -70,14 +69,14 @@ const PreferenceCard = ({ preferences, onEdit }) => {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: index * 0.1, duration: 0.5 }}
-              className="group/item flex items-center space-x-4 p-4 rounded-2xl border border-gray-100 hover:border-purple-200 hover:bg-gradient-to-r hover:from-purple-50/50 hover:to-pink-50/50 transition-all duration-300"
+              className="group/item flex items-center space-x-4 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 hover:border-purple-200 hover:bg-gradient-to-r hover:from-purple-50/50 hover:to-pink-50/50 dark:hover:from-gray-700/50 dark:hover:to-gray-600/50 transition-all duration-300"
             >
               <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${color} flex items-center justify-center group-hover/item:scale-110 transition-transform duration-300 shadow-lg`}>
                 <Icon className="w-6 h-6 text-white" />
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-1">{label}</h3>
-                <p className="text-gray-900 font-medium truncate group-hover/item:text-purple-700 transition-colors duration-300">
+                <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wide mb-1">{label}</h3>
+                <p className="text-gray-900 dark:text-gray-100 font-medium truncate group-hover/item:text-purple-700 transition-colors duration-300">
                   {value}
                 </p>
               </div>
@@ -91,10 +90,10 @@ const PreferenceCard = ({ preferences, onEdit }) => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.5 }}
-            className="mt-6 p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl border border-purple-100"
+            className="mt-6 p-4 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-gray-700 dark:to-gray-800 rounded-2xl border border-purple-100 dark:border-gray-600"
           >
-            <h3 className="text-sm font-semibold text-purple-800 uppercase tracking-wide mb-2">Additional Requirements</h3>
-            <p className="text-purple-700 leading-relaxed">{preferences.additionalRequirements}</p>
+            <h3 className="text-sm font-semibold text-purple-800 dark:text-purple-300 uppercase tracking-wide mb-2">Additional Requirements</h3>
+            <p className="text-purple-700 dark:text-purple-200 leading-relaxed">{preferences.additionalRequirements}</p>
           </motion.div>
         )}
 

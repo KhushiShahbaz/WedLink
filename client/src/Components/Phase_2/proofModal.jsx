@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiX, FiUpload, FiFile, FiCheck, FiImage, FiFileText } from 'react-icons/fi';
@@ -22,7 +21,7 @@ export const UploadProofModal = ({ isOpen, onClose, onSubmit, loading }) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    
+
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       const file = e.dataTransfer.files[0];
       validateAndSetFile(file);
@@ -105,7 +104,7 @@ export const UploadProofModal = ({ isOpen, onClose, onSubmit, loading }) => {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             transition={{ type: "spring", duration: 0.5 }}
-            className="relative bg-white rounded-3xl shadow-2xl border border-gray-100 max-w-lg w-full mx-4 overflow-hidden"
+            className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl max-w-lg w-full mx-4 overflow-hidden"
           >
             {/* Header with gradient */}
             <div className="bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 p-6 relative overflow-hidden">
@@ -129,7 +128,7 @@ export const UploadProofModal = ({ isOpen, onClose, onSubmit, loading }) => {
                   <FiX className="w-5 h-5" />
                 </motion.button>
               </div>
-              
+
               {/* Decorative elements */}
               <div className="absolute -top-4 -right-4 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
               <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-white/5 rounded-full blur-2xl"></div>
@@ -139,10 +138,10 @@ export const UploadProofModal = ({ isOpen, onClose, onSubmit, loading }) => {
             <form onSubmit={handleSubmit} className="p-6">
               {/* File Upload Area */}
               <div className="mb-6">
-                <label className="block text-sm font-semibold text-gray-700 mb-3">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
                   Upload Document
                 </label>
-                
+
                 {!selectedFile ? (
                   <div
                     className={`relative border-2 border-dashed rounded-2xl p-8 text-center transition-all duration-300 ${
@@ -163,20 +162,20 @@ export const UploadProofModal = ({ isOpen, onClose, onSubmit, loading }) => {
                       accept=".jpg,.jpeg,.png,.pdf"
                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                     />
-                    
+
                     <div className="space-y-4">
                       <div className="w-16 h-16 bg-gradient-to-r from-purple-100 to-pink-100 rounded-full flex items-center justify-center mx-auto">
                         <FiUpload className="w-8 h-8 text-purple-500" />
                       </div>
-                      
+
                       <div>
-                        <p className="text-lg font-semibold text-gray-700 mb-2">
+                        <p className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">
                           Drop your file here or click to browse
                         </p>
                         <p className="text-sm text-gray-500 mb-4">
                           Supports: JPG, PNG, PDF (Max 5MB)
                         </p>
-                        
+
                         <motion.button
                           type="button"
                           whileHover={{ scale: 1.05 }}
@@ -200,7 +199,7 @@ export const UploadProofModal = ({ isOpen, onClose, onSubmit, loading }) => {
                           className: "w-6 h-6 text-white" 
                         })}
                       </div>
-                      
+
                       <div className="flex-1 min-w-0">
                         <p className="font-semibold text-green-800 truncate">
                           {selectedFile.name}
@@ -209,7 +208,7 @@ export const UploadProofModal = ({ isOpen, onClose, onSubmit, loading }) => {
                           {formatFileSize(selectedFile.size)}
                         </p>
                       </div>
-                      
+
                       <motion.button
                         type="button"
                         whileHover={{ scale: 1.1 }}
@@ -222,7 +221,7 @@ export const UploadProofModal = ({ isOpen, onClose, onSubmit, loading }) => {
                     </div>
                   </motion.div>
                 )}
-                
+
                 {errors.file && (
                   <p className="mt-2 text-sm text-red-600">{errors.file}</p>
                 )}
@@ -256,7 +255,7 @@ export const UploadProofModal = ({ isOpen, onClose, onSubmit, loading }) => {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={onClose}
-                  className="flex-1 px-6 py-3 border-2 border-gray-200 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-all duration-200"
+                  className="flex-1 px-6 py-3 border-2 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-xl font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200"
                 >
                   Cancel
                 </motion.button>

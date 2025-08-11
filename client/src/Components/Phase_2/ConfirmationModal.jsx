@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiAlertTriangle, FiX } from 'react-icons/fi';
@@ -52,7 +51,7 @@ const ConfirmationModal = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             transition={{ type: "spring", duration: 0.5 }}
-            className="relative bg-white rounded-3xl shadow-2xl border border-gray-100 max-w-md w-full mx-4 overflow-hidden"
+            className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl max-w-md w-full mx-4 overflow-hidden"
           >
             {/* Gradient header */}
             <div className={`h-2 bg-gradient-to-r ${currentStyle.buttonColor}`}></div>
@@ -61,22 +60,22 @@ const ConfirmationModal = ({
               {/* Close button */}
               <button
                 onClick={onClose}
-                className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors duration-200"
+                className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors duration-200"
               >
                 <FiX className="w-5 h-5" />
               </button>
 
               {/* Icon */}
               <div className="flex justify-center mb-4">
-                <div className={`w-16 h-16 rounded-full bg-gray-50 flex items-center justify-center ${currentStyle.borderColor} border-2`}>
+                <div className={`w-16 h-16 rounded-full bg-gray-50 dark:bg-gray-700 flex items-center justify-center ${currentStyle.borderColor} border-2`}>
                   <FiAlertTriangle className={`w-8 h-8 ${currentStyle.iconColor}`} />
                 </div>
               </div>
 
               {/* Content */}
               <div className="text-center mb-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-2">{title}</h3>
-                <p className="text-gray-600 leading-relaxed">{message}</p>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">{title}</h3>
+                <p className="text-gray-600 dark:text-gray-300 leading-relaxed">{message}</p>
               </div>
 
               {/* Actions */}
@@ -85,7 +84,7 @@ const ConfirmationModal = ({
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={onClose}
-                  className="flex-1 px-6 py-3 border-2 border-gray-200 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-all duration-200"
+                  className="flex-1 px-6 py-3 border-2 border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 rounded-xl font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200"
                 >
                   {cancelText}
                 </motion.button>
