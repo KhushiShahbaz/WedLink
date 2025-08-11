@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FiCreditCard, FiCalendar, FiDollarSign, FiCheckCircle, FiClock, FiAlertCircle } from 'react-icons/fi';
@@ -52,7 +51,7 @@ export const PaymentCard = ({ payment }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className="bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-2xl transition-all duration-500 group"
+      className="bg-white dark:bg-gray-800 rounded-3xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden hover:shadow-2xl transition-all duration-500 group"
     >
       {/* Header with gradient */}
       <div className={`bg-gradient-to-r ${statusConfig.color} p-6 relative overflow-hidden`}>
@@ -66,7 +65,7 @@ export const PaymentCard = ({ payment }) => {
             <FiCreditCard className="w-6 h-6 text-white" />
           </div>
         </div>
-        
+
         {/* Decorative elements */}
         <div className="absolute -top-4 -right-4 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
         <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-white/5 rounded-full blur-2xl"></div>
@@ -88,14 +87,14 @@ export const PaymentCard = ({ payment }) => {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.1, duration: 0.5 }}
-            className="flex items-center space-x-4 p-4 rounded-2xl border border-gray-100 hover:border-purple-200 hover:bg-gradient-to-r hover:from-purple-50/50 hover:to-pink-50/50 transition-all duration-300"
+            className="flex items-center space-x-4 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 hover:border-purple-200 dark:hover:border-purple-600 hover:bg-gradient-to-r hover:from-purple-50/50 dark:hover:from-purple-800/50 hover:to-pink-50/50 dark:hover:to-pink-800/50 transition-all duration-300"
           >
             <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center shadow-lg">
               <FiDollarSign className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Amount</h3>
-              <p className="text-xl font-bold text-gray-900">₹{payment.amount}</p>
+              <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wide">Amount</h3>
+              <p className="text-xl font-bold text-gray-900 dark:text-white">₹{payment.amount}</p>
             </div>
           </motion.div>
 
@@ -103,14 +102,14 @@ export const PaymentCard = ({ payment }) => {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2, duration: 0.5 }}
-            className="flex items-center space-x-4 p-4 rounded-2xl border border-gray-100 hover:border-purple-200 hover:bg-gradient-to-r hover:from-purple-50/50 hover:to-pink-50/50 transition-all duration-300"
+            className="flex items-center space-x-4 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 hover:border-purple-200 dark:hover:border-purple-600 hover:bg-gradient-to-r hover:from-purple-50/50 dark:hover:from-purple-800/50 hover:to-pink-50/50 dark:hover:to-pink-800/50 transition-all duration-300"
           >
             <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center shadow-lg">
               <FiCalendar className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Date</h3>
-              <p className="text-lg font-medium text-gray-900">
+              <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wide">Date</h3>
+              <p className="text-lg font-medium text-gray-900 dark:text-white">
                 {new Date(payment.createdAt).toLocaleDateString()}
               </p>
             </div>
@@ -123,10 +122,10 @@ export const PaymentCard = ({ payment }) => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.5 }}
-            className="p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl border border-gray-200"
+            className="p-4 bg-gradient-to-r from-gray-50 dark:from-gray-700 to-gray-100 dark:to-gray-600 rounded-2xl border border-gray-200 dark:border-gray-700"
           >
-            <h3 className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-2">Transaction ID</h3>
-            <p className="text-gray-900 font-mono text-sm break-all">{payment.transactionId}</p>
+            <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wide mb-2">Transaction ID</h3>
+            <p className="text-gray-900 dark:text-gray-200 font-mono text-sm break-all">{payment.transactionId}</p>
           </motion.div>
         )}
 
@@ -136,10 +135,10 @@ export const PaymentCard = ({ payment }) => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.5 }}
-            className="mt-4 p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl border border-purple-100"
+            className="mt-4 p-4 bg-gradient-to-r from-purple-50 dark:from-purple-800/50 to-pink-50 dark:to-pink-800/50 rounded-2xl border border-purple-100 dark:border-purple-700"
           >
-            <h3 className="text-sm font-semibold text-purple-800 uppercase tracking-wide mb-2">Description</h3>
-            <p className="text-purple-700 leading-relaxed">{payment.description}</p>
+            <h3 className="text-sm font-semibold text-purple-800 dark:text-purple-300 uppercase tracking-wide mb-2">Description</h3>
+            <p className="text-purple-700 dark:text-purple-200 leading-relaxed">{payment.description}</p>
           </motion.div>
         )}
       </div>

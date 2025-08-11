@@ -130,7 +130,7 @@ const ProfilePageUser = () => {
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="text-center bg-white rounded-3xl shadow-xl p-12 max-w-md mx-4"
+          className="text-center bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-12 max-w-md mx-4"
         >
           <div className="w-20 h-20 bg-gradient-to-r from-purple-100 to-pink-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <FiUser className="w-10 h-10 text-purple-500" />
@@ -157,14 +157,14 @@ const ProfilePageUser = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-purple-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
         {/* Profile Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden mb-8"
+          className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden mb-8"
         >
           {/* Gradient Header */}
           <div className="bg-gradient-to-r from-purple-600 via-pink-500 to-purple-700 p-8 relative overflow-hidden">
@@ -253,7 +253,7 @@ const ProfilePageUser = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden"
+              className="bg-white dark:bg-gray-800 rounded-3xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden"
             >
               <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-6">
                 <h2 className="text-2xl font-bold text-white flex items-center space-x-3">
@@ -276,8 +276,8 @@ const ProfilePageUser = () => {
                         <Icon className="w-6 h-6 text-white" />
                       </div>
                       <div>
-                        <h3 className="text-sm font-semibold text-gray-600 uppercase tracking-wide">{label}</h3>
-                        <p className="text-gray-900 font-medium">{value}</p>
+                        <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">{label}</h3>
+                        <p className="text-gray-900 dark:text-white font-medium">{value}</p>
                       </div>
                     </motion.div>
                   ))}
@@ -333,7 +333,7 @@ const ProfilePageUser = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.8 }}
-              className="bg-white rounded-3xl shadow-lg border border-gray-100 p-6"
+              className="bg-white dark:bg-gray-800 rounded-3xl shadow-lg border border-gray-100 dark:border-gray-700 p-6"
             >
               <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center space-x-2">
                 <FiTrendingUp className="w-5 h-5" />
@@ -373,7 +373,7 @@ const ProfilePageUser = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1.0 }}
-                className="bg-white rounded-3xl shadow-lg border border-gray-100 p-6"
+                className="bg-white dark:bg-gray-800 rounded-3xl shadow-lg border border-gray-100 dark:border-gray-700 p-6"
               >
                 <h3 className="text-xl font-bold text-gray-900 mb-6">Quick Actions</h3>
                 

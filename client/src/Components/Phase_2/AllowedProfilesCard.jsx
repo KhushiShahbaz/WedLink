@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FiUsers, FiEye, FiShield, FiSettings, FiCheck, FiX } from 'react-icons/fi';
@@ -10,13 +9,13 @@ const AllowedProfilesCard = ({ allowedProfiles, onToggleProfile, loading }) => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="bg-white rounded-3xl shadow-lg border border-gray-100 p-8 text-center"
+        className="bg-white dark:bg-gray-800 rounded-3xl shadow-lg border border-gray-100 dark:border-gray-700 p-8 text-center"
       >
         <div className="w-16 h-16 bg-gradient-to-r from-purple-100 to-pink-100 rounded-full flex items-center justify-center mx-auto mb-4">
           <FiUsers className="w-8 h-8 text-purple-400" />
         </div>
-        <h3 className="text-lg font-semibold text-gray-600 mb-2">No Allowed Profiles</h3>
-        <p className="text-gray-500">No profiles have been granted access yet</p>
+        <h3 className="text-lg font-semibold text-gray-600 dark:text-gray-300 mb-2">No Allowed Profiles</h3>
+        <p className="text-gray-500 dark:text-gray-400">No profiles have been granted access yet</p>
       </motion.div>
     );
   }
@@ -26,7 +25,7 @@ const AllowedProfilesCard = ({ allowedProfiles, onToggleProfile, loading }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className="bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden group hover:shadow-2xl transition-all duration-500"
+      className="bg-white dark:bg-gray-800 rounded-3xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden group hover:shadow-2xl transition-all duration-500"
     >
       {/* Header with gradient */}
       <div className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-6 relative overflow-hidden">
@@ -45,7 +44,7 @@ const AllowedProfilesCard = ({ allowedProfiles, onToggleProfile, loading }) => {
             <span className="text-white font-semibold">{allowedProfiles.length} Profiles</span>
           </div>
         </div>
-        
+
         {/* Decorative elements */}
         <div className="absolute -top-4 -right-4 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
         <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-white/5 rounded-full blur-2xl"></div>
@@ -60,28 +59,28 @@ const AllowedProfilesCard = ({ allowedProfiles, onToggleProfile, loading }) => {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: index * 0.1, duration: 0.5 }}
-              className="flex items-center justify-between p-4 rounded-2xl border border-gray-100 hover:border-purple-200 hover:bg-gradient-to-r hover:from-purple-50/50 hover:to-pink-50/50 transition-all duration-300 group/item"
+              className="flex items-center justify-between p-4 rounded-2xl border border-gray-100 dark:border-gray-700 hover:border-purple-200 dark:hover:border-purple-400 hover:bg-gradient-to-r hover:from-purple-50/50 dark:hover:from-purple-800/50 hover:to-pink-50/50 dark:hover:to-pink-800/50 transition-all duration-300 group/item"
             >
               <div className="flex items-center space-x-4">
                 <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center shadow-lg group-hover/item:scale-110 transition-transform duration-300">
                   <FiUsers className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 group-hover/item:text-purple-700 transition-colors duration-300">
+                  <h3 className="font-semibold text-gray-900 dark:text-gray-200 group-hover/item:text-purple-700 dark:group-hover/item:text-purple-400 transition-colors duration-300">
                     {profile.name || 'Profile'}
                   </h3>
-                  <p className="text-sm text-gray-500">{profile.email || 'No email provided'}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{profile.email || 'No email provided'}</p>
                 </div>
               </div>
 
               <div className="flex items-center space-x-3">
                 {profile.isAllowed ? (
-                  <div className="flex items-center space-x-2 bg-green-50 text-green-700 px-3 py-1 rounded-full border border-green-200">
+                  <div className="flex items-center space-x-2 bg-green-50 dark:bg-green-900 text-green-700 dark:text-green-400 px-3 py-1 rounded-full border border-green-200 dark:border-green-700">
                     <FiCheck className="w-4 h-4" />
                     <span className="text-sm font-medium">Allowed</span>
                   </div>
                 ) : (
-                  <div className="flex items-center space-x-2 bg-red-50 text-red-700 px-3 py-1 rounded-full border border-red-200">
+                  <div className="flex items-center space-x-2 bg-red-50 dark:bg-red-900 text-red-700 dark:text-red-400 px-3 py-1 rounded-full border border-red-200 dark:border-red-700">
                     <FiX className="w-4 h-4" />
                     <span className="text-sm font-medium">Blocked</span>
                   </div>
@@ -94,8 +93,8 @@ const AllowedProfilesCard = ({ allowedProfiles, onToggleProfile, loading }) => {
                   disabled={loading}
                   className={`px-4 py-2 rounded-xl font-medium transition-all duration-200 ${
                     profile.isAllowed
-                      ? 'bg-red-100 text-red-700 hover:bg-red-200 hover:text-red-800'
-                      : 'bg-green-100 text-green-700 hover:bg-green-200 hover:text-green-800'
+                      ? 'bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-800 hover:text-red-800 dark:hover:text-red-300'
+                      : 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-800 hover:text-green-800 dark:hover:text-green-300'
                   } disabled:opacity-50 disabled:cursor-not-allowed`}
                 >
                   {loading ? (
@@ -114,13 +113,13 @@ const AllowedProfilesCard = ({ allowedProfiles, onToggleProfile, loading }) => {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5, duration: 0.5 }}
-          className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl border border-blue-200"
+          className="mt-6 p-4 bg-gradient-to-r from-blue-50 dark:from-blue-900 to-indigo-50 dark:to-indigo-800 rounded-2xl border border-blue-200 dark:border-blue-700"
         >
           <div className="flex items-center space-x-3 mb-3">
-            <FiSettings className="w-5 h-5 text-blue-600" />
-            <h3 className="font-semibold text-blue-800">Access Control</h3>
+            <FiSettings className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+            <h3 className="font-semibold text-blue-800 dark:text-blue-300">Access Control</h3>
           </div>
-          <p className="text-sm text-blue-700 leading-relaxed">
+          <p className="text-sm text-blue-700 dark:text-blue-400 leading-relaxed">
             Manage which profiles can view your information. You can allow or block access for specific users at any time.
           </p>
         </motion.div>

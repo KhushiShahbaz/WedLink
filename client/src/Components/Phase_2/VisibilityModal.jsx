@@ -1,14 +1,13 @@
-
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiX, FiEye, FiEyeOff, FiUsers, FiLock, FiUnlock } from 'react-icons/fi';
 
-const PaidUsersVisibilityModal = ({ 
-  isOpen, 
-  onClose, 
-  onUpdateVisibility, 
-  currentVisibility, 
-  loading 
+const PaidUsersVisibilityModal = ({
+  isOpen,
+  onClose,
+  onUpdateVisibility,
+  currentVisibility,
+  loading
 }) => {
   const [selectedVisibility, setSelectedVisibility] = useState(currentVisibility || 'private');
 
@@ -69,7 +68,7 @@ const PaidUsersVisibilityModal = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             transition={{ type: "spring", duration: 0.5 }}
-            className="relative bg-white rounded-3xl shadow-2xl border border-gray-100 max-w-2xl w-full mx-4 overflow-hidden max-h-[90vh] overflow-y-auto"
+            className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl border border-gray-100 dark:border-gray-700 max-w-2xl w-full mx-4 overflow-hidden max-h-[90vh] overflow-y-auto"
           >
             {/* Header with gradient */}
             <div className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-6 relative overflow-hidden">
@@ -93,7 +92,7 @@ const PaidUsersVisibilityModal = ({
                   <FiX className="w-5 h-5" />
                 </motion.button>
               </div>
-              
+
               {/* Decorative elements */}
               <div className="absolute -top-4 -right-4 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
               <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-white/5 rounded-full blur-2xl"></div>
@@ -105,7 +104,7 @@ const PaidUsersVisibilityModal = ({
                 {visibilityOptions.map((option, index) => {
                   const Icon = option.icon;
                   const isSelected = selectedVisibility === option.id;
-                  
+
                   return (
                     <motion.label
                       key={option.id}
@@ -113,9 +112,9 @@ const PaidUsersVisibilityModal = ({
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.1, duration: 0.5 }}
                       className={`block cursor-pointer group relative overflow-hidden rounded-2xl border-2 transition-all duration-300 ${
-                        isSelected 
-                          ? `${option.borderColor} bg-gradient-to-r ${option.bgColor}` 
-                          : 'border-gray-200 hover:border-gray-300 bg-white hover:bg-gray-50'
+                        isSelected
+                          ? `${option.borderColor} bg-gradient-to-r ${option.bgColor}`
+                          : 'border-gray-200 hover:border-gray-300 bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700'
                       }`}
                     >
                       <div className="p-6">
@@ -131,9 +130,9 @@ const PaidUsersVisibilityModal = ({
                               className="sr-only"
                             />
                             <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
-                              isSelected 
-                                ? 'border-purple-500 bg-purple-500' 
-                                : 'border-gray-300 group-hover:border-purple-300'
+                              isSelected
+                                ? 'border-purple-500 bg-purple-500'
+                                : 'border-gray-300 group-hover:border-purple-300 dark:border-gray-600 dark:group-hover:border-purple-400'
                             }`}>
                               {isSelected && (
                                 <motion.div
@@ -152,19 +151,19 @@ const PaidUsersVisibilityModal = ({
                                 <Icon className="w-6 h-6 text-white" />
                               </div>
                               <div>
-                                <h3 className="text-xl font-bold text-gray-900">{option.title}</h3>
-                                <p className="text-gray-600">{option.description}</p>
+                                <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">{option.title}</h3>
+                                <p className="text-gray-600 dark:text-gray-400">{option.description}</p>
                               </div>
                             </div>
 
                             {/* Benefits */}
                             <div className="mt-4">
-                              <h4 className="text-sm font-semibold text-gray-700 mb-2">Benefits:</h4>
+                              <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Benefits:</h4>
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                                 {option.benefits.map((benefit, benefitIndex) => (
                                   <div key={benefitIndex} className="flex items-center space-x-2">
-                                    <div className="w-1.5 h-1.5 bg-gray-400 rounded-full"></div>
-                                    <span className="text-sm text-gray-600">{benefit}</span>
+                                    <div className="w-1.5 h-1.5 bg-gray-400 rounded-full dark:bg-gray-500"></div>
+                                    <span className="text-sm text-gray-600 dark:text-gray-400">{benefit}</span>
                                   </div>
                                 ))}
                               </div>
@@ -191,20 +190,20 @@ const PaidUsersVisibilityModal = ({
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3, duration: 0.5 }}
-                className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl border border-blue-200"
+                className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl border border-blue-200 dark:from-blue-900 dark:to-indigo-900 dark:border-blue-800"
               >
                 <div className="flex items-center space-x-2 mb-2">
                   {currentVisibility === 'public' ? (
-                    <FiUnlock className="w-5 h-5 text-blue-600" />
+                    <FiUnlock className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                   ) : (
-                    <FiLock className="w-5 h-5 text-blue-600" />
+                    <FiLock className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                   )}
-                  <span className="font-semibold text-blue-800">
+                  <span className="font-semibold text-blue-800 dark:text-blue-200">
                     Current Status: {currentVisibility === 'public' ? 'Public' : 'Private'}
                   </span>
                 </div>
-                <p className="text-sm text-blue-700">
-                  {currentVisibility === 'public' 
+                <p className="text-sm text-blue-700 dark:text-blue-300">
+                  {currentVisibility === 'public'
                     ? 'Your profile is currently visible to all users and agencies.'
                     : 'Your profile is currently hidden from public view.'
                   }
@@ -223,7 +222,7 @@ const PaidUsersVisibilityModal = ({
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={onClose}
-                  className="flex-1 px-6 py-3 border-2 border-gray-200 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-all duration-200"
+                  className="flex-1 px-6 py-3 border-2 border-gray-200 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 transition-all duration-200"
                 >
                   Cancel
                 </motion.button>

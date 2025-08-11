@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { motion } from 'framer-motion';
@@ -21,7 +20,7 @@ const MatchMakingForm = ({ onClose }) => {
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState(1);
   const totalSteps = 3;
-  
+
   const [preferences, setPreferences] = useState({
     ageRangeMin: '',
     ageRangeMax: '',
@@ -39,7 +38,7 @@ const MatchMakingForm = ({ onClose }) => {
       ...prev,
       [name]: value
     }));
-    
+
     // Clear error when user starts typing
     if (errors[name]) {
       setErrors(prev => ({
@@ -51,7 +50,7 @@ const MatchMakingForm = ({ onClose }) => {
 
   const validateStep = (currentStep) => {
     const newErrors = {};
-    
+
     if (currentStep === 1) {
       if (!preferences.ageRangeMin) newErrors.ageRangeMin = 'Minimum age is required';
       if (!preferences.ageRangeMax) newErrors.ageRangeMax = 'Maximum age is required';
@@ -60,12 +59,12 @@ const MatchMakingForm = ({ onClose }) => {
         newErrors.ageRangeMax = 'Maximum age must be greater than minimum age';
       }
     }
-    
+
     if (currentStep === 2) {
       if (!preferences.education) newErrors.education = 'Education preference is required';
       if (!preferences.profession) newErrors.profession = 'Profession preference is required';
     }
-    
+
     if (currentStep === 3) {
       if (!preferences.location) newErrors.location = 'Location preference is required';
     }
@@ -114,13 +113,13 @@ const MatchMakingForm = ({ onClose }) => {
               <div className="w-16 h-16 bg-gradient-to-r from-pink-500 to-rose-500 rounded-full flex items-center justify-center mx-auto mb-4">
                 <FiCalendar className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">Age Preferences</h3>
-              <p className="text-gray-600">What age range are you looking for?</p>
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Age Preferences</h3>
+              <p className="text-gray-600 dark:text-gray-400">What age range are you looking for?</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-3">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
                   Minimum Age
                 </label>
                 <input
@@ -128,8 +127,8 @@ const MatchMakingForm = ({ onClose }) => {
                   name="ageRangeMin"
                   value={preferences.ageRangeMin}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-200 ${
-                    errors.ageRangeMin ? 'border-red-300 bg-red-50' : 'border-gray-200 focus:border-purple-300'
+                  className={`w-full px-4 py-3 rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-200 dark:bg-gray-800 dark:border-gray-700 ${
+                    errors.ageRangeMin ? 'border-red-300 bg-red-50 dark:bg-red-900 dark:border-red-700' : 'border-gray-200 focus:border-purple-300 dark:focus:border-purple-500'
                   }`}
                   placeholder="e.g., 25"
                   min="18"
@@ -141,7 +140,7 @@ const MatchMakingForm = ({ onClose }) => {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-3">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
                   Maximum Age
                 </label>
                 <input
@@ -149,8 +148,8 @@ const MatchMakingForm = ({ onClose }) => {
                   name="ageRangeMax"
                   value={preferences.ageRangeMax}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-200 ${
-                    errors.ageRangeMax ? 'border-red-300 bg-red-50' : 'border-gray-200 focus:border-purple-300'
+                  className={`w-full px-4 py-3 rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-200 dark:bg-gray-800 dark:border-gray-700 ${
+                    errors.ageRangeMax ? 'border-red-300 bg-red-50 dark:bg-red-900 dark:border-red-700' : 'border-gray-200 focus:border-purple-300 dark:focus:border-purple-500'
                   }`}
                   placeholder="e.g., 35"
                   min="18"
@@ -176,13 +175,13 @@ const MatchMakingForm = ({ onClose }) => {
               <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full flex items-center justify-center mx-auto mb-4">
                 <FiBook className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">Education & Career</h3>
-              <p className="text-gray-600">What are your educational and professional preferences?</p>
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Education & Career</h3>
+              <p className="text-gray-600 dark:text-gray-400">What are your educational and professional preferences?</p>
             </div>
 
             <div className="space-y-6">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-3 flex items-center space-x-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center space-x-2">
                   <FiBook className="w-4 h-4" />
                   <span>Education Level</span>
                 </label>
@@ -190,8 +189,8 @@ const MatchMakingForm = ({ onClose }) => {
                   name="education"
                   value={preferences.education}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-200 ${
-                    errors.education ? 'border-red-300 bg-red-50' : 'border-gray-200 focus:border-purple-300'
+                  className={`w-full px-4 py-3 rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-200 dark:bg-gray-800 dark:border-gray-700 ${
+                    errors.education ? 'border-red-300 bg-red-50 dark:bg-red-900 dark:border-red-700' : 'border-gray-200 focus:border-purple-300 dark:focus:border-purple-500'
                   }`}
                 >
                   <option value="">Select education level</option>
@@ -207,7 +206,7 @@ const MatchMakingForm = ({ onClose }) => {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-3 flex items-center space-x-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center space-x-2">
                   <FiBriefcase className="w-4 h-4" />
                   <span>Profession</span>
                 </label>
@@ -216,8 +215,8 @@ const MatchMakingForm = ({ onClose }) => {
                   name="profession"
                   value={preferences.profession}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-200 ${
-                    errors.profession ? 'border-red-300 bg-red-50' : 'border-gray-200 focus:border-purple-300'
+                  className={`w-full px-4 py-3 rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-200 dark:bg-gray-800 dark:border-gray-700 ${
+                    errors.profession ? 'border-red-300 bg-red-50 dark:bg-red-900 dark:border-red-700' : 'border-gray-200 focus:border-purple-300 dark:focus:border-purple-500'
                   }`}
                   placeholder="e.g., Software Engineer, Doctor, Teacher"
                 />
@@ -241,13 +240,13 @@ const MatchMakingForm = ({ onClose }) => {
               <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4">
                 <FiMapPin className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">Location & Additional</h3>
-              <p className="text-gray-600">Where would you like your partner to be from?</p>
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Location & Additional</h3>
+              <p className="text-gray-600 dark:text-gray-400">Where would you like your partner to be from?</p>
             </div>
 
             <div className="space-y-6">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-3 flex items-center space-x-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center space-x-2">
                   <FiMapPin className="w-4 h-4" />
                   <span>Preferred Location</span>
                 </label>
@@ -256,8 +255,8 @@ const MatchMakingForm = ({ onClose }) => {
                   name="location"
                   value={preferences.location}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-200 ${
-                    errors.location ? 'border-red-300 bg-red-50' : 'border-gray-200 focus:border-purple-300'
+                  className={`w-full px-4 py-3 rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-200 dark:bg-gray-800 dark:border-gray-700 ${
+                    errors.location ? 'border-red-300 bg-red-50 dark:bg-red-900 dark:border-red-700' : 'border-gray-200 focus:border-purple-300 dark:focus:border-purple-500'
                   }`}
                   placeholder="e.g., Karachi, Lahore, Islamabad"
                 />
@@ -267,7 +266,7 @@ const MatchMakingForm = ({ onClose }) => {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-3">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
                   Additional Requirements (Optional)
                 </label>
                 <textarea
@@ -275,7 +274,7 @@ const MatchMakingForm = ({ onClose }) => {
                   value={preferences.additionalRequirements}
                   onChange={handleChange}
                   rows="4"
-                  className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-300 transition-all duration-200"
+                  className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-300 transition-all duration-200 dark:bg-gray-800 dark:border-gray-700"
                   placeholder="Any additional preferences or requirements..."
                 />
               </div>
@@ -289,7 +288,7 @@ const MatchMakingForm = ({ onClose }) => {
   };
 
   return (
-    <div className="bg-white rounded-3xl shadow-2xl overflow-hidden max-w-2xl w-full mx-4">
+    <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl overflow-hidden max-w-2xl w-full mx-4">
       {/* Header with gradient */}
       <div className="bg-gradient-to-r from-purple-600 via-pink-500 to-purple-700 p-6 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent"></div>
@@ -312,19 +311,19 @@ const MatchMakingForm = ({ onClose }) => {
             <FiX className="w-5 h-5" />
           </motion.button>
         </div>
-        
+
         {/* Decorative elements */}
         <div className="absolute -top-4 -right-4 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
         <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-white/5 rounded-full blur-2xl"></div>
       </div>
 
       {/* Progress Bar */}
-      <div className="px-6 py-4 bg-gray-50">
+      <div className="px-6 py-4 bg-gray-50 dark:bg-gray-800">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium text-gray-600">Step {step} of {totalSteps}</span>
-          <span className="text-sm font-medium text-gray-600">{Math.round((step / totalSteps) * 100)}%</span>
+          <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Step {step} of {totalSteps}</span>
+          <span className="text-sm font-medium text-gray-600 dark:text-gray-400">{Math.round((step / totalSteps) * 100)}%</span>
         </div>
-        <div className="w-full bg-gray-200 rounded-full h-2">
+        <div className="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: `${(step / totalSteps) * 100}%` }}
@@ -339,14 +338,14 @@ const MatchMakingForm = ({ onClose }) => {
         {renderStepContent()}
 
         {/* Navigation Buttons */}
-        <div className="flex justify-between mt-8 pt-6 border-t border-gray-200">
+        <div className="flex justify-between mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
           <motion.button
             type="button"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={handlePrev}
             disabled={step === 1}
-            className="px-6 py-3 border-2 border-gray-200 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+            className="px-6 py-3 border-2 border-gray-200 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
           >
             Previous
           </motion.button>

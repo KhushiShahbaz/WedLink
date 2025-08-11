@@ -75,7 +75,7 @@ const AgencyListing = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-purple-50/30 text-gray-900 dark:text-gray-100 transition-colors">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-purple-900 text-gray-900 dark:text-gray-100 transition-colors">
       {/* Mobile Filter Dialog */}
       <div className={`fixed inset-0 z-40 my-5 lg:hidden ${mobileFiltersOpen ? 'block' : 'hidden'}`}>
         <div className="fixed inset-0 bg-black bg-opacity-25" onClick={() => setMobileFiltersOpen(false)}></div>
@@ -256,10 +256,10 @@ const AgencyListing = () => {
                           </div>
                         </div>
                       )}
-                      
+
                       {/* Gradient overlay */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-                      
+
                       {/* Verified badge */}
                       {agency.isVerified && (
                         <div className="absolute top-4 right-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg flex items-center space-x-1">
@@ -269,19 +269,19 @@ const AgencyListing = () => {
                           <span>Verified</span>
                         </div>
                       )}
-                      
+
                       {/* Experience badge */}
                       <div className="absolute top-4 left-4 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm text-gray-800 dark:text-gray-200 px-3 py-1 rounded-full text-xs font-semibold">
                         {agency.yearOfExp}+ years exp.
                       </div>
                     </div>
-                    
+
                     <div className="p-6">
                       <div className="mb-4">
                         <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-2 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors duration-300">
                           {agency.name}
                         </h2>
-                        
+
                         <div className="flex items-center text-gray-600 dark:text-gray-300 mb-3">
                           <svg className="w-4 h-4 mr-2 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -289,12 +289,12 @@ const AgencyListing = () => {
                           </svg>
                           <span className="text-sm">{agency.address.city}, {agency.address.country}</span>
                         </div>
-                        
+
                         <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed line-clamp-3">
                           {agency.profile}
                         </p>
                       </div>
-                      
+
                       <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-700">
                         <div className="flex items-center space-x-3">
                           <div className="flex items-center text-yellow-500">
@@ -306,7 +306,7 @@ const AgencyListing = () => {
                           <span className="text-xs text-gray-500">•</span>
                           <span className="text-xs text-gray-500">100+ matches</span>
                         </div>
-                        
+
                         <Button 
                           onClick={() => handleProfileView(agency._id)} 
                           btnText="View Profile"

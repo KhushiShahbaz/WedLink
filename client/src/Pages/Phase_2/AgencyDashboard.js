@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector, useStore } from 'react-redux';
 import { fetchAgencyDashboardData, fetchMiniCards, fetchSummary, fetchTargets } from '../../slice/agencyDashboardSlice';
@@ -35,32 +34,32 @@ const ProgressCard = ({ title, value, target, color }) => {
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className="bg-white rounded-2xl shadow-lg p-6 h-full border border-gray-100 hover:shadow-xl transition-all duration-300 group"
+      className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 h-full border border-gray-100 dark:border-gray-700 hover:shadow-xl transition-all duration-300 group"
     >
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-semibold text-gray-600 uppercase tracking-wide">{title}</h3>
+        <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wide">{title}</h3>
         <div className={`w-3 h-3 rounded-full bg-gradient-to-r ${colorClasses[color]}`}></div>
       </div>
-      
+
       <div className="mb-6">
         <div className="flex items-baseline space-x-2">
-          <span className="text-3xl font-bold text-gray-900">{value}</span>
-          <span className="text-lg text-gray-500">/ {target}</span>
+          <span className="text-3xl font-bold text-gray-900 dark:text-white">{value}</span>
+          <span className="text-lg text-gray-500 dark:text-gray-400">/ {target}</span>
         </div>
-        <p className="text-sm text-gray-500 mt-1">{percentage}% Complete</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{percentage}% Complete</p>
       </div>
-      
+
       <div className="space-y-2">
         <div className="flex justify-between text-sm">
-          <span className="text-gray-600">Progress</span>
-          <span className="font-medium text-gray-900">{percentage}%</span>
+          <span className="text-gray-600 dark:text-gray-300">Progress</span>
+          <span className="font-medium text-gray-900 dark:text-white">{percentage}%</span>
         </div>
-        <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
-          <motion.div 
+        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
+          <motion.div
             initial={{ width: 0 }}
             animate={{ width: `${percentage}%` }}
             transition={{ duration: 1, delay: 0.3 }}
@@ -93,15 +92,15 @@ const StatsCard = ({ title, value, icon: Icon, color, trend }) => {
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
       whileHover={{ y: -5 }}
-      className="bg-white rounded-2xl shadow-lg p-6 h-full border border-gray-100 hover:shadow-xl transition-all duration-300 group relative overflow-hidden"
+      className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 h-full border border-gray-100 dark:border-gray-700 hover:shadow-xl transition-all duration-300 group relative overflow-hidden"
     >
       <div className={`absolute inset-0 bg-gradient-to-br ${bgColorClasses[color]} opacity-0 group-hover:opacity-50 transition-opacity duration-300`}></div>
-      
+
       <div className="relative z-10">
         <div className="flex items-start justify-between mb-4">
           <div className={`rounded-xl w-14 h-14 flex items-center justify-center bg-gradient-to-r ${colorClasses[color]} shadow-lg`}>
@@ -109,9 +108,9 @@ const StatsCard = ({ title, value, icon: Icon, color, trend }) => {
           </div>
           {trend && (
             <div className={`flex items-center space-x-1 px-3 py-1 rounded-full text-sm font-medium ${
-              trend.value > 0 
-                ? 'bg-green-100 text-green-700' 
-                : 'bg-red-100 text-red-700'
+              trend.value > 0
+                ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
+                : 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300'
             }`}>
               {/* {trend.value > 0 ? (
                 <FaTrendingUp className="w-3 h-3" />
@@ -122,12 +121,12 @@ const StatsCard = ({ title, value, icon: Icon, color, trend }) => {
             </div>
           )}
         </div>
-        
+
         <div className="space-y-1">
-          <h3 className="text-sm font-semibold text-gray-600 uppercase tracking-wide">{title}</h3>
-          <p className="text-3xl font-bold text-gray-900">{value}</p>
+          <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wide">{title}</h3>
+          <p className="text-3xl font-bold text-gray-900 dark:text-white">{value}</p>
           {trend && (
-            <p className="text-xs text-gray-500">{trend.label}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">{trend.label}</p>
           )}
         </div>
       </div>
@@ -146,20 +145,20 @@ const MiniStatsCard = ({ title, value, icon: Icon, color }) => {
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.6 }}
       whileHover={{ scale: 1.05 }}
-      className="bg-white rounded-xl shadow-md p-4 h-full border border-gray-100 hover:shadow-lg transition-all duration-300 group"
+      className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 h-full border border-gray-100 dark:border-gray-700 hover:shadow-lg transition-all duration-300 group"
     >
       <div className="flex items-center space-x-3">
         <div className={`rounded-lg w-12 h-12 flex items-center justify-center bg-gradient-to-r ${colorClasses[color]} shadow-md group-hover:shadow-lg transition-shadow duration-300`}>
           <Icon className="text-lg text-white" />
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="text-xs font-semibold text-gray-600 uppercase tracking-wide truncate">{title}</h3>
-          <p className="text-xl font-bold text-gray-900">{value}</p>
+          <h3 className="text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wide truncate">{title}</h3>
+          <p className="text-xl font-bold text-gray-900 dark:text-white">{value}</p>
         </div>
       </div>
     </motion.div>
@@ -185,9 +184,9 @@ const AgencyDashboard = () => {
   }, [dispatch]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-purple-50/30 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-purple-900 p-6">
       {/* Header Section */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
@@ -195,13 +194,13 @@ const AgencyDashboard = () => {
       >
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">Agency Dashboard</h1>
-            <p className="text-gray-600">Welcome back! Here's what's happening with your agency today.</p>
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">Agency Dashboard</h1>
+            <p className="text-gray-600 dark:text-gray-300">Welcome back! Here's what's happening with your agency today.</p>
           </div>
           <div className="hidden md:flex items-center space-x-4">
-            <div className="bg-white rounded-lg px-4 py-2 shadow-sm border border-gray-200">
-              <span className="text-sm text-gray-600">Today: </span>
-              <span className="font-semibold text-gray-900">{new Date().toLocaleDateString()}</span>
+            <div className="bg-white dark:bg-gray-800 rounded-lg px-4 py-2 shadow-sm border border-gray-200 dark:border-gray-700">
+              <span className="text-sm text-gray-600 dark:text-gray-300">Today: </span>
+              <span className="font-semibold text-gray-900 dark:text-white">{new Date().toLocaleDateString()}</span>
             </div>
           </div>
         </div>
@@ -209,7 +208,7 @@ const AgencyDashboard = () => {
 
       {/* Top Row - Monthly Target + Mini Cards */}
       <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
@@ -226,7 +225,7 @@ const AgencyDashboard = () => {
         {miniCards.map((card, idx) => {
           const IconComponent = iconMap[card.icon] || FaUsers;
           return (
-            <motion.div 
+            <motion.div
               key={idx}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -245,7 +244,7 @@ const AgencyDashboard = () => {
       </div>
 
       {/* Main Stats Grid */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8, delay: 0.3 }}
@@ -298,14 +297,14 @@ const AgencyDashboard = () => {
       </motion.div>
 
       {/* Quick Actions Section */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.5 }}
         className="mt-8"
       >
-        <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">Quick Actions</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 border border-gray-100 dark:border-gray-700">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Quick Actions</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
               { title: 'Add New Client', icon: FaUsers, color: 'primary' },
@@ -317,11 +316,11 @@ const AgencyDashboard = () => {
                 key={idx}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="flex flex-col items-center p-4 rounded-xl border-2 border-gray-200 hover:border-purple-300 transition-all duration-300 group"
+                className="flex flex-col items-center p-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-500 transition-all duration-300 group"
               >
-                <action.icon className="w-8 h-8 text-gray-600 group-hover:text-purple-600 mb-2" />
-                <span className="text-sm font-medium text-gray-700 group-hover:text-purple-700">{action.title}</span>
-              </motion.button>
+                <action.icon className="w-8 h-8 text-gray-600 dark:text-gray-300 group-hover:text-purple-600 dark:group-hover:text-purple-400 mb-2" />
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-purple-700 dark:group-hover:text-purple-400">{action.title}</span>
+              </motion.div>
             ))}
           </div>
         </div>

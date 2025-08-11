@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiX, FiCheck, FiAlertCircle, FiDollarSign, FiCalendar, FiUser, FiFileText } from 'react-icons/fi';
@@ -16,7 +15,7 @@ export const PaymentVerificationModal = ({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     if (!verificationStatus) {
       setErrors({ status: 'Please select a verification status' });
       return;
@@ -79,7 +78,7 @@ export const PaymentVerificationModal = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             transition={{ type: "spring", duration: 0.5 }}
-            className="relative bg-white rounded-3xl shadow-2xl border border-gray-100 max-w-2xl w-full mx-4 overflow-hidden max-h-[90vh] overflow-y-auto"
+            className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl border border-gray-100 max-w-2xl w-full mx-4 overflow-hidden max-h-[90vh] overflow-y-auto"
           >
             {/* Header with gradient */}
             <div className="bg-gradient-to-r from-purple-500 via-pink-500 to-purple-600 p-6 relative overflow-hidden">
@@ -103,7 +102,7 @@ export const PaymentVerificationModal = ({
                   <FiX className="w-5 h-5" />
                 </motion.button>
               </div>
-              
+
               {/* Decorative elements */}
               <div className="absolute -top-4 -right-4 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
               <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-white/5 rounded-full blur-2xl"></div>
@@ -123,7 +122,7 @@ export const PaymentVerificationModal = ({
                     <FiFileText className="w-5 h-5" />
                     <span>Payment Information</span>
                   </h3>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="flex items-center space-x-3">
                       <FiDollarSign className="w-5 h-5 text-blue-600" />
@@ -132,7 +131,7 @@ export const PaymentVerificationModal = ({
                         <p className="text-lg font-bold text-blue-900">₹{paymentData.amount}</p>
                       </div>
                     </div>
-                    
+
                     <div className="flex items-center space-x-3">
                       <FiCalendar className="w-5 h-5 text-blue-600" />
                       <div>
@@ -140,7 +139,7 @@ export const PaymentVerificationModal = ({
                         <p className="text-blue-900">{new Date(paymentData.createdAt).toLocaleDateString()}</p>
                       </div>
                     </div>
-                    
+
                     {paymentData.userId && (
                       <div className="flex items-center space-x-3">
                         <FiUser className="w-5 h-5 text-blue-600" />
@@ -150,7 +149,7 @@ export const PaymentVerificationModal = ({
                         </div>
                       </div>
                     )}
-                    
+
                     {paymentData.transactionId && (
                       <div className="flex items-center space-x-3">
                         <FiFileText className="w-5 h-5 text-blue-600" />
@@ -167,14 +166,14 @@ export const PaymentVerificationModal = ({
               <form onSubmit={handleSubmit}>
                 {/* Verification Status */}
                 <div className="mb-6">
-                  <label className="block text-sm font-semibold text-gray-700 mb-3">
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
                     Verification Status
                   </label>
                   <div className="space-y-3">
                     {statusOptions.map((option, index) => {
                       const Icon = option.icon;
                       const isSelected = verificationStatus === option.value;
-                      
+
                       return (
                         <motion.label
                           key={option.value}
@@ -184,7 +183,7 @@ export const PaymentVerificationModal = ({
                           className={`block cursor-pointer rounded-2xl border-2 transition-all duration-300 ${
                             isSelected 
                               ? `${option.borderColor} bg-gradient-to-r ${option.bgColor}` 
-                              : 'border-gray-200 hover:border-gray-300 bg-white hover:bg-gray-50'
+                              : 'border-gray-200 hover:border-gray-300 bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600'
                           }`}
                         >
                           <div className="p-4">
@@ -197,11 +196,11 @@ export const PaymentVerificationModal = ({
                                 onChange={(e) => setVerificationStatus(e.target.value)}
                                 className="sr-only"
                               />
-                              
+
                               <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
                                 isSelected 
                                   ? 'border-purple-500 bg-purple-500' 
-                                  : 'border-gray-300'
+                                  : 'border-gray-300 dark:border-gray-600'
                               }`}>
                                 {isSelected && (
                                   <motion.div
@@ -211,14 +210,14 @@ export const PaymentVerificationModal = ({
                                   />
                                 )}
                               </div>
-                              
+
                               <div className={`w-10 h-10 rounded-xl bg-gradient-to-r ${option.color} flex items-center justify-center shadow-lg`}>
                                 <Icon className="w-5 h-5 text-white" />
                               </div>
-                              
+
                               <div>
-                                <h3 className="font-semibold text-gray-900">{option.label}</h3>
-                                <p className="text-sm text-gray-600">{option.description}</p>
+                                <h3 className="font-semibold text-gray-900 dark:text-gray-100">{option.label}</h3>
+                                <p className="text-sm text-gray-600 dark:text-gray-400">{option.description}</p>
                               </div>
                             </div>
                           </div>
@@ -233,13 +232,13 @@ export const PaymentVerificationModal = ({
 
                 {/* Notes */}
                 <div className="mb-6">
-                  <label className="block text-sm font-semibold text-gray-700 mb-3">
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
                     Verification Notes (Optional)
                   </label>
                   <textarea
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
-                    className="w-full px-4 py-4 rounded-xl border-2 border-gray-200 focus:border-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-200 resize-none"
+                    className="w-full px-4 py-4 rounded-xl border-2 border-gray-200 focus:border-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-200 resize-none dark:bg-gray-700 dark:border-gray-600 dark:focus:border-purple-500 dark:text-white"
                     placeholder="Add any additional notes about the verification..."
                     rows="4"
                   />
@@ -257,7 +256,7 @@ export const PaymentVerificationModal = ({
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={onClose}
-                    className="flex-1 px-6 py-3 border-2 border-gray-200 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-all duration-200"
+                    className="flex-1 px-6 py-3 border-2 border-gray-200 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700 transition-all duration-200"
                   >
                     Cancel
                   </motion.button>

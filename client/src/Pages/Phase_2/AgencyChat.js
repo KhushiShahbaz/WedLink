@@ -148,13 +148,13 @@ const AgencyChat = ({ candidateId, candidateName, onClose }) => {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gradient-to-br from-slate-50 to-purple-50">
+    <div className="flex flex-col h-screen bg-gradient-to-br from-slate-50 to-purple-50 dark:from-gray-900 dark:to-purple-900">
       
       {/* Chat Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white border-b border-gray-200 shadow-sm"
+        className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm"
       >
         <div className="flex items-center justify-between p-4">
           <div className="flex items-center space-x-4">
@@ -167,8 +167,8 @@ const AgencyChat = ({ candidateId, candidateName, onClose }) => {
               )}
             </div>
             <div>
-              <h3 className="font-semibold text-gray-900">{candidateName}</h3>
-              <p className="text-sm text-gray-500">
+              <h3 className="font-semibold text-gray-900 dark:text-white">{candidateName}</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
                 {socketConnected ? 'Online' : 'Offline'}
               </p>
             </div>
@@ -213,7 +213,7 @@ const AgencyChat = ({ candidateId, candidateName, onClose }) => {
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="bg-white border-b border-gray-100 p-4"
+        className="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 p-4"
       >
         <div className="flex flex-wrap gap-2">
           <motion.button
@@ -293,7 +293,7 @@ const AgencyChat = ({ candidateId, candidateName, onClose }) => {
                     <div className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl shadow-sm ${
                       isOwn 
                         ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white' 
-                        : 'bg-white text-gray-900 border border-gray-200'
+                        : 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-600'
                     }`}>
                       <p className="break-words">{message.content}</p>
                       <div className={`flex items-center justify-end space-x-1 mt-2 ${
@@ -325,7 +325,7 @@ const AgencyChat = ({ candidateId, candidateName, onClose }) => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="bg-white border-t border-gray-200 p-4"
+        className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 p-4"
       >
         <form onSubmit={handleSendMessage} className="flex items-end space-x-3">
           <div className="flex-1">
@@ -335,7 +335,7 @@ const AgencyChat = ({ candidateId, candidateName, onClose }) => {
                 onChange={(e) => setNewMessage(e.target.value)}
                 placeholder="Type your message..."
                 rows="1"
-                className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none bg-gray-50"
+                className="w-full px-4 py-3 pr-12 border border-gray-300 dark:border-gray-600 rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
                 onKeyPress={(e) => {
                   if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
