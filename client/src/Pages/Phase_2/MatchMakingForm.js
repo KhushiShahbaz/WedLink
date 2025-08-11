@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { motion } from 'framer-motion';
-// import { createPreferences } from '../../slice/matchMakingSlice';
+import { createPreference, getPreferences } from '../../slice/matchMakingSlice';
 import { 
   FiHeart, 
   FiX, 
@@ -89,7 +89,7 @@ const MatchMakingForm = ({ onClose }) => {
 
     setLoading(true);
     try {
-      // await dispatch(createPreferences(preferences)).unwrap();
+      await dispatch(createPreference(preferences)).unwrap();
       toast.success('Preferences saved successfully!');
       onClose();
     } catch (error) {

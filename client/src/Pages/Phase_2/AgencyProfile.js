@@ -1,12 +1,14 @@
+
 // src/components/AgencyProfileDisplay.js
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { deleteAgency, fetchAgencyByuserId } from '../../slice/agencySlice';
 import { Button } from '../../Components/Layout/Button';
-import { Building, Phone, FileText, MapPin, UserCheck, ShieldCheck, BadgeInfo, Calendar, IdCard, Globe } from 'lucide-react';
+import { Building, Phone, FileText, MapPin, UserCheck, ShieldCheck, BadgeInfo, Calendar, IdCard, Globe, Mail, Users, Star, Edit, Trash2 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import ConfirmationModal from '../../Components/Phase_2/ConfirmationModal';
+import { motion } from 'framer-motion';
 
 export const AgencyProfileDisplay = () => {
   const { id } = useParams();
@@ -15,7 +17,8 @@ export const AgencyProfileDisplay = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
-  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
   useEffect(() => {
     const loadProfile = async () => {
       try {
@@ -54,8 +57,6 @@ export const AgencyProfileDisplay = () => {
     }
   };
 
-
-
   const handleDeleteProfile = () => {
     setShowDeleteModal(true);
   };
@@ -63,7 +64,7 @@ export const AgencyProfileDisplay = () => {
   const confirmDeleteProfile = async () => {
     try {
       await dispatch(deleteAgency(agency._id)).unwrap();
-      toast.success('Profile Deleted successfully')
+      toast.success('Profile Deleted successfully');
       navigate('/');
     } catch (err) {
       setError(err.message || 'Failed to delete profile');
@@ -72,175 +73,325 @@ export const AgencyProfileDisplay = () => {
     }
   };
 
-
   const handleCardClick = () => {
-    navigate("/agency/addProfile")
+    navigate("/agency/addProfile");
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-purple-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-purple-600 mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-300 text-lg">Loading your profile...</p>
+        </div>
+      </div>
+    );
   }
 
-  if (loading) return (
-    <div className="text-center py-20">
-      <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
-      <p className="mt-2">Loading profile...</p>
-    </div>
-  );
-
-  if (error) return (
-    <div className="text-center py-20 text-red-500">
-      <p>Error: {error}</p>
-      <button
-        onClick={() => window.location.reload()}
-        className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-      >
-        Retry
-      </button>
-    </div>
-  );
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-purple-900 flex items-center justify-center">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 text-center max-w-md mx-4"
+        >
+          <div className="text-red-500 text-6xl mb-4">⚠️</div>
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">Error</h2>
+          <p className="text-gray-600 dark:text-gray-300 mb-4">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-6 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-300"
+          >
+            Retry
+          </button>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
-
-    <div className="ml-[3rem]   text-gray-900 dark:text-gray-100 min-h-screen">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-purple-900 p-6">
       {!agency ? (
-        <div className='flex items-center justify-center min-h-[90vh]'>
-          <div className="text-white bg-gradient-to-br from-marriagePink via-marriageHotPink to-marriageRed p-10 rounded-2xl shadow-xl text-center border border-white/20 dark:border-white/10">
-            <h2 className="text-2xl font-semibold mb-3">Create Agency Profile</h2>
-            <p className="mb-4 text-white/80">"Find your perfect match with intelligent matchmaking."</p>
-
-            <button
-              className="bg-white text-marriageHotPink px-5 py-2  hover:bg-gray-200 transition"
-              onClick={handleCardClick}
-            >
-              Create Profile
-            </button>
-          </div>
+        <div className="flex items-center justify-center min-h-[90vh]">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6 }}
+            className="relative overflow-hidden bg-gradient-to-br from-purple-600 via-pink-600 to-red-600 p-12 rounded-3xl shadow-2xl text-center max-w-md mx-auto"
+          >
+            {/* Decorative elements */}
+            <div className="absolute top-0 left-0 w-20 h-20 bg-white/10 rounded-full -translate-x-10 -translate-y-10"></div>
+            <div className="absolute bottom-0 right-0 w-32 h-32 bg-white/10 rounded-full translate-x-16 translate-y-16"></div>
+            
+            <div className="relative z-10">
+              <div className="text-white text-7xl mb-6">🏢</div>
+              <h2 className="text-3xl font-bold text-white mb-4">Create Your Agency</h2>
+              <p className="text-white/90 mb-8 text-lg leading-relaxed">
+                Join our platform and start connecting hearts with our intelligent matchmaking system
+              </p>
+              
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="bg-white text-purple-600 px-8 py-4 rounded-2xl font-bold text-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1"
+                onClick={handleCardClick}
+              >
+                Get Started
+              </motion.button>
+            </div>
+          </motion.div>
         </div>
       ) : (
-        <div className="p-4 md:p-8">
-          <div className="max-w-6xl mx-auto space-y-6">
+        <div className="max-w-6xl mx-auto">
+          {/* Header */}
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="mb-8"
+          >
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">Your Agency Profile</h1>
+            <p className="text-gray-600 dark:text-gray-300">Manage your agency information and settings</p>
+          </motion.div>
 
-            {/* Header Section */}
-            <div className="bg-white border-gray-200 border-2 dark:border-gray-700 dark:bg-gray-900 rounded-2xl shadow p-6 flex flex-col md:flex-row justify-between items-start md:items-center">
-              <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
-                <div className="w-32 h-32 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center overflow-hidden">
+          {/* Main Profile Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden mb-8"
+          >
+            {/* Cover Section */}
+            <div className="relative h-64 bg-gradient-to-br from-purple-500 via-pink-500 to-red-500">
+              <div className="absolute inset-0 bg-black/20"></div>
+              
+              {/* Agency Logo */}
+              <div className="absolute -bottom-16 left-8">
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
+                  className="w-32 h-32 rounded-2xl border-4 border-white dark:border-gray-700 bg-white dark:bg-gray-700 shadow-2xl overflow-hidden"
+                >
                   {agency.images?.[0] ? (
-                    <img src={`http://localhost:5000/${agency.images[0]}`} alt="Agency Logo" className="w-full h-full object-cover" />
+                    <img
+                      src={`http://localhost:5000/${agency.images[0]}`}
+                      alt={agency.name}
+                      className="w-full h-full object-cover"
+                    />
                   ) : (
-                    <Building className="text-blue-600 dark:text-blue-300 w-12 h-12" />
-                  )}
-                </div>
-                <div>
-                  <h1 className="text-3xl font-bold text-gray-800 dark:text-white">{agency.name}</h1>
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${agency.isVerified ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'}`}>
-                      {agency.isVerified ? 'Verified' : 'Pending Verification'}
-                    </span>
-                    <span className="px-3 py-1 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 text-sm font-medium flex items-center gap-1">
-                      <Calendar className="w-4 h-4" /> {agency.yearOfExp} yrs experience
-                    </span>
-                  </div>
-                  <p className="mt-4 text-gray-600 dark:text-gray-200">{agency.profile}</p>
-                </div>
-              </div>
-              <div className="flex gap-2 mt-4 md:mt-0">
-                <Button onClick={handleEditProfile} btnText={"Edit"} />
-                <Button onClick={handleDeleteProfile} btnText="Delete Profile" />
-              </div>
-            </div>
-
-            {/* Contact Information */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-white  dark:bg-gray-900 border-2 border-gray-200 dark:border-gray-700 rounded-2xl shadow p-6 space-y-4">
-                <h2 className="text-xl font-semibold text-gray-800 dark:text-white flex items-center gap-2 border-b border-gray-200 dark:border-gray-700 pb-2">
-                  <Phone className="w-5 h-5 text-gray-500 dark:text-gray-400" /> Contact Information
-                </h2>
-                <InfoItem icon={<Phone className="w-4 h-4" />} label="Business Number" value={agency.businessNo} />
-                <InfoItem icon={<FileText className="w-4 h-4" />} label="License Number" value={agency.licenseNo} />
-                <InfoItem icon={<IdCard className="w-4 h-4" />} label="CNIC Number" value={agency.cnicNo || 'Not provided'} />
-                <InfoItem icon={<Phone className="w-4 h-4" />} label="Contact Number" value={agency.contactNo} />
-              </div>
-
-              {/* Address */}
-              <div className="bg-white dark:bg-gray-900 border-2 border-gray-200 dark:border-gray-700 rounded-2xl shadow p-6 space-y-4">
-                <h2 className="text-xl font-semibold text-gray-800 dark:text-white flex items-center gap-2 border-b border-gray-200 dark:border-gray-700 pb-2">
-                  <MapPin className="w-5 h-5 text-gray-500 dark:text-gray-400" /> Address
-                </h2>
-                <InfoItem icon={<MapPin className="w-4 h-4" />} label="Street" value={agency?.address?.street} />
-                <div className="grid grid-cols-2 gap-4">
-                  <InfoItem icon={<MapPin className="w-4 h-4" />} label="City" value={agency?.address?.city} />
-                  <InfoItem icon={<MapPin className="w-4 h-4" />} label="State" value={agency?.address?.state || 'Not provided'} />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <InfoItem icon={<BadgeInfo className="w-4 h-4" />} label="Postal Code" value={agency?.address?.postalCode || 'Not provided'} />
-                  <InfoItem icon={<Globe className="w-4 h-4" />} label="Country" value={agency?.address?.country} />
-                </div>
-              </div>
-            </div>
-
-            {/* Documents */}
-            {agency.images?.length > 0 && (
-              <div className="bg-white dark:bg-gray-900 border-2 border-gray-200  dark:border-gray-700 rounded-2xl shadow-md p-6">
-                <h2 className="text-xl font-semibold text-gray-800 dark:text-white flex items-center gap-2 border-b border-gray-200 dark:border-gray-700 pb-2 mb-4">
-                  <FileText className="w-5 h-5 text-gray-500 dark:text-gray-400" /> Documents
-                </h2>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {agency.images.map((img, index) => (
-                    <div key={index} className="border rounded-lg overflow-hidden dark:border-gray-700">
-                      <img src={`http://localhost:5000/${img}`} alt={`Document ${index + 1}`} className="w-full h-40 object-cover" />
-                      <div className="p-2 text-center bg-gray-50 dark:bg-gray-800">
-                        <p className="text-sm text-gray-600 dark:text-gray-300">Document {index + 1}</p>
-                      </div>
+                    <div className="w-full h-full flex items-center justify-center text-4xl text-gray-400">
+                      🏢
                     </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Verification Status */}
-            <div className="bg-white  dark:bg-gray-900 border-2 border-gray-200  dark:border-gray-700 rounded-2xl shadow p-6">
-              <h2 className="text-xl font-semibold text-gray-800 dark:text-white flex items-center gap-2 border-b border-gray-200 dark:border-gray-700 pb-2 mb-4">
-                <ShieldCheck className="w-5 h-5 text-gray-500 dark:text-gray-400" /> Verification Status
-              </h2>
-              <div className="flex items-center gap-4">
-                <div className={`w-12 h-12 rounded-full flex items-center justify-center ${agency.isVerified ? 'bg-green-100 dark:bg-green-900' : 'bg-yellow-100 dark:bg-yellow-900'}`}>
-                  {agency.isVerified ? (
-                    <UserCheck className="w-6 h-6 text-green-600 dark:text-green-300" />
-                  ) : (
-                    <BadgeInfo className="w-6 h-6 text-yellow-600 dark:text-yellow-300" />
                   )}
-                </div>
-                <div>
-                  <h3 className="font-medium text-gray-800 dark:text-white">
-                    {agency.isVerified ? 'Verified Agency' : 'Pending Verification'}
-                  </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-300">
-                    {agency.isVerified
-                      ? 'This agency has been verified by our team.'
-                      : 'Verification is under process.'}
-                  </p>
-                </div>
+                </motion.div>
+              </div>
+
+              {/* Verification Badge */}
+              {agency.isVerified && (
+                <div className="absolute top-6 right-6">
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.4 }}
+                    className="flex items-center bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-4 py-2 rounded-full shadow-lg"
+                  >
+                    <ShieldCheck className="w-5 h-5 mr-2" />
+                    <span className="font-semibold">Verified</span>
+                  </motion.div>
+                )}
+              </div>
+
+              {/* Action Buttons */}
+              <div className="absolute top-6 left-6 flex gap-3">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handleEditProfile}
+                  className="flex items-center bg-white/90 hover:bg-white text-gray-800 px-4 py-2 rounded-full font-medium transition-all duration-300 shadow-lg"
+                >
+                  <Edit className="w-4 h-4 mr-2" />
+                  Edit Profile
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handleDeleteProfile}
+                  className="flex items-center bg-red-500/90 hover:bg-red-600 text-white px-4 py-2 rounded-full font-medium transition-all duration-300 shadow-lg"
+                >
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Delete
+                </motion.button>
               </div>
             </div>
 
-          </div>
+            {/* Profile Info */}
+            <div className="pt-20 px-8 pb-8">
+              <div className="mb-8">
+                <motion.h2
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.5 }}
+                  className="text-3xl font-bold text-gray-900 dark:text-white mb-3"
+                >
+                  {agency.name}
+                </motion.h2>
+                
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6 }}
+                  className="flex flex-wrap gap-4 text-gray-600 dark:text-gray-300 mb-6"
+                >
+                  <div className="flex items-center">
+                    <MapPin className="w-5 h-5 mr-2 text-purple-500" />
+                    <span>{agency.address?.city}, {agency.address?.country}</span>
+                  </div>
+                  <div className="flex items-center">
+                    <Calendar className="w-5 h-5 mr-2 text-purple-500" />
+                    <span>{agency.yearOfExp} years experience</span>
+                  </div>
+                  <div className="flex items-center">
+                    <Users className="w-5 h-5 mr-2 text-purple-500" />
+                    <span>500+ matches</span>
+                  </div>
+                </motion.div>
+
+                <motion.p
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.7 }}
+                  className="text-gray-600 dark:text-gray-300 text-lg leading-relaxed"
+                >
+                  {agency.profile}
+                </motion.p>
+              </div>
+
+              {/* Stats Cards */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.8 }}
+                className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"
+              >
+                <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/30 p-6 rounded-2xl">
+                  <div className="flex items-center mb-3">
+                    <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center mb-3">
+                      <Users className="w-6 h-6 text-white" />
+                    </div>
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">500+</h3>
+                  <p className="text-gray-600 dark:text-gray-300">Active Clients</p>
+                </div>
+
+                <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/30 dark:to-green-800/30 p-6 rounded-2xl">
+                  <div className="flex items-center mb-3">
+                    <div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center mb-3">
+                      <Star className="w-6 h-6 text-white" />
+                    </div>
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">4.9</h3>
+                  <p className="text-gray-600 dark:text-gray-300">Average Rating</p>
+                </div>
+
+                <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/30 dark:to-purple-800/30 p-6 rounded-2xl">
+                  <div className="flex items-center mb-3">
+                    <div className="w-12 h-12 bg-purple-500 rounded-xl flex items-center justify-center mb-3">
+                      <BadgeInfo className="w-6 h-6 text-white" />
+                    </div>
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">350+</h3>
+                  <p className="text-gray-600 dark:text-gray-300">Successful Matches</p>
+                </div>
+              </motion.div>
+
+              {/* Contact Information */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1 }}
+                className="grid grid-cols-1 md:grid-cols-2 gap-6"
+              >
+                <div className="bg-gray-50 dark:bg-gray-700 p-6 rounded-2xl">
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center">
+                    <Phone className="w-5 h-5 mr-2 text-purple-500" />
+                    Contact Details
+                  </h3>
+                  <div className="space-y-3">
+                    <div className="flex items-center text-gray-600 dark:text-gray-300">
+                      <Phone className="w-4 h-4 mr-3" />
+                      <span>{agency.contactNo}</span>
+                    </div>
+                    <div className="flex items-center text-gray-600 dark:text-gray-300">
+                      <Mail className="w-4 h-4 mr-3" />
+                      <span>{agency.email || 'Not provided'}</span>
+                    </div>
+                    <div className="flex items-center text-gray-600 dark:text-gray-300">
+                      <Globe className="w-4 h-4 mr-3" />
+                      <span>www.{agency.name.toLowerCase().replace(/\s+/g, '')}.com</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-gray-50 dark:bg-gray-700 p-6 rounded-2xl">
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center">
+                    <MapPin className="w-5 h-5 mr-2 text-purple-500" />
+                    Address
+                  </h3>
+                  <div className="text-gray-600 dark:text-gray-300 space-y-1">
+                    <p>{agency.address?.street}</p>
+                    <p>{agency.address?.city}, {agency.address?.state}</p>
+                    <p>{agency.address?.country} - {agency.address?.zipCode}</p>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          </motion.div>
+
+          {/* Gallery Section */}
+          {agency.images?.length > 1 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.2 }}
+              className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-8"
+            >
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Gallery</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {agency.images.slice(1).map((img, index) => (
+                  <motion.div
+                    key={index}
+                    whileHover={{ scale: 1.05 }}
+                    className="group relative rounded-2xl overflow-hidden h-48 bg-gray-100 dark:bg-gray-700"
+                  >
+                    <img
+                      src={`http://localhost:5000/${img}`}
+                      alt={`Gallery image ${index + 1}`}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300"></div>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          )}
         </div>
       )}
-      {showDeleteModal && (
-        <ConfirmationModal
-          onClickCancel={() => setShowDeleteModal(false)}
-          onClickSubmit={confirmDeleteProfile}
-          cnfrmText={'Are you sure you want to delete your profile? This action cannot be undone.'} />
-      )}
 
+      {/* Delete Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={confirmDeleteProfile}
+        title="Delete Agency Profile"
+        message="Are you sure you want to delete your agency profile? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        type="danger"
+      />
     </div>
-
-
   );
 };
 
-const InfoItem = ({ icon, label, value }) => (
-  <div>
-    <p className="text-sm font-medium text-gray-700 dark:text-gray-100 flex items-center gap-1">
-      {icon} {label}
-    </p>
-    <p className="text-gray-800 dark:text-gray-200">{value}</p>
-  </div>
-);
+export default AgencyProfileDisplay;
