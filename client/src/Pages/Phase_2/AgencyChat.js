@@ -32,6 +32,8 @@ import { PaymentRequestModal } from '../../Components/Phase_2/paymentModal';
 import { createAccount } from '../../slice/savedAccountsSlice';
 import { UploadProofModal } from '../../Components/Phase_2/proofModal';
 import { PaymentVerificationModal } from '../../Components/Phase_2/paymentVerificationModal';
+import VideoCall from '../../Components/Phase_2/VideoCall';
+import AudioCall from '../../Components/Phase_2/AudioCall';
 import { toast } from 'react-toastify';
 
 const AgencyChat = ({ candidateId, candidateName, onClose }) => {
@@ -49,6 +51,8 @@ const AgencyChat = ({ candidateId, candidateName, onClose }) => {
   const [matchmakingModalOpen, setMatchmakingModalOpen] = useState(false);
   const [selectedProof, setSelectedProof] = useState(null);
   const [socketConnected, setSocketConnected] = useState(false);
+  const [videoCallOpen, setVideoCallOpen] = useState(false);
+  const [audioCallOpen, setAudioCallOpen] = useState(false);
 
   useEffect(() => {
     if (candidateId) {
@@ -178,14 +182,18 @@ const AgencyChat = ({ candidateId, candidateName, onClose }) => {
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
-              className="p-2 text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded-full transition-colors duration-200"
+              onClick={() => setAudioCallOpen(true)}
+              className="p-2 text-gray-500 hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-full transition-colors duration-200"
+              title="Start Audio Call"
             >
               <FiPhone className="w-5 h-5" />
             </motion.button>
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
-              className="p-2 text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded-full transition-colors duration-200"
+              onClick={() => setVideoCallOpen(true)}
+              className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-full transition-colors duration-200"
+              title="Start Video Call"
             >
               <FiVideo className="w-5 h-5" />
             </motion.button>
@@ -401,6 +409,24 @@ const AgencyChat = ({ candidateId, candidateName, onClose }) => {
           </div>
         </div>
       )}
+
+      {/* Video Call Component */}
+      <VideoCall
+        isOpen={videoCallOpen}
+        onClose={() => setVideoCallOpen(false)}
+        recipientId={candidateId}
+        recipientName={candidateName}
+        isInitiator={true}
+      />
+
+      {/* Audio Call Component */}
+      <AudioCall
+        isOpen={audioCallOpen}
+        onClose={() => setAudioCallOpen(false)}
+        recipientId={candidateId}
+        recipientName={candidateName}
+        isInitiator={true}
+      />
     </div>
   );
 };

@@ -702,6 +702,7 @@
     "side-channel-map": "^1.0.1",
     "side-channel-weakmap": "^1.0.2",
     "signal-exit": "^3.0.7",
+    "simple-peer": "^9.11.1",
     "sisteransi": "^1.0.5",
     "slash": "^3.0.0",
     "socket.io-client": "^4.8.1",
